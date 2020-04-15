@@ -12,6 +12,7 @@
 #include <helpers.h>
 #include <chrono> 
 #include <numeric> 
+#include <img_proc_func.h>
 
 using namespace cv;
 using namespace std;
@@ -24,6 +25,9 @@ static void threshold_trackbar (int , void* )
     current = images[frame_slider];
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
+
+    ThreeFrameProcesser tfp(current, previous, pre_previous);
+    tfp.calculateDifferences(threshold_slider);
 
     auto start = high_resolution_clock::now();
     cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
@@ -43,37 +47,13 @@ static void threshold_trackbar (int , void* )
         cout << "Calculating all matches from brute force: " << duration_cast<milliseconds>(high_resolution_clock::now() - start).count() << endl;
         CHECK_IMAGE("WholeImageBruteForce", match_results, false);
     }
-    //Mat current_with_keypoints;
-    //drawKeypoints(current, kp_cur, current_with_keypoints, Scalar(0, 255, 0), 0);
 
-    start = high_resolution_clock::now();
-    cv::Mat temp1; //Diff between current(t) and prev(t-1)
-    temp1 = current - previous;
-    cv::cvtColor(temp1, temp1, cv::COLOR_BGR2GRAY);
-    cv::threshold(temp1, temp1, threshold_slider, 190, cv::THRESH_BINARY);
+    imshow("Diff", tfp.diff_img);
 
-    cv::Mat temp2; //Diff between prev(t-1) and pre_prev(t-2)
-    temp2 = previous - pre_previous;
-    cv::cvtColor(temp2, temp2, cv::COLOR_BGR2GRAY);
-    cv::threshold(temp2, temp2, threshold_slider, 105, cv::THRESH_BINARY);
-
-    add(temp1, temp2, diff_img);  //NOTE: color saturates to 255, does not overflow
-    cout << "Diff_img calculation: " << duration_cast<milliseconds>(high_resolution_clock::now() - start).count() << endl;
-    imshow("Diff", diff_img);
-
-
-    Mat visible_parts_temp1;
-    cv::bitwise_and(current, current, visible_parts_temp1, temp1);
-    Mat visible_parts_temp2;
-    cv::bitwise_and(previous, previous, visible_parts_temp2, temp2);
-
-    //drawKeypoints(visible_parts_temp1, kp, visible_parts_temp1, Scalar(0, 255, 0), 0);
-
-    hconcat(visible_parts_temp1, visible_parts_temp2, visible_parts_temp1);
+    cv::Mat visible_parts;
+    tfp.calculateVisibleParts(visible_parts);
     namedWindow("VisiblePart1", WINDOW_FREERATIO);
-    imshow("VisiblePart1", visible_parts_temp1);
-    
-    
+    imshow("VisiblePart1", visible_parts);
 
 
     start = high_resolution_clock::now();

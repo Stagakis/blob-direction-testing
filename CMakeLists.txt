@@ -22,7 +22,16 @@ include_directories( ./include/ )
 
 
 
-add_executable(Blob_direction src/main.cpp include/ORBextractor.h src/ORBextractor.cc src/helpers.cpp include/helpers.h) 
+add_executable(Blob_direction 
+src/main.cpp 
+src/ORBextractor.cc 
+src/helpers.cpp  
+src/img_proc_func.cpp
+
+include/helpers.h
+include/ORBextractor.h
+include/img_proc_func.h
+) 
 
 target_link_libraries( Blob_direction ${OpenCV_LIBS} )
 

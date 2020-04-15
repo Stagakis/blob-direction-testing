@@ -28,7 +28,7 @@ void createWindowsAndTrackbars();
 static void frame_trackbar(int, void*);
 void categorize_kp_to_blobs();
 
-Mat diff_img;
+//Mat diff_img;
 Mat current_greyscale, previous_greyscale;
 
 
