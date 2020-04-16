@@ -11,9 +11,9 @@ class ThreeFrameProcesser{
         cv::Mat visible_parts_cur, visible_parts_prev;
 
         
-        ThreeFrameProcesser(cv::Mat cur, cv::Mat prev, cv::Mat preprev);
+        ThreeFrameProcesser(cv::Mat &cur, cv::Mat &prev, cv::Mat &preprev);
         void calculateDifferences(int threshold);
-        void calculateVisibleParts(cv::Mat outImg);
-        void two_image_differencing(const cv::Mat &img1, const cv::Mat &img2, cv::Mat outImage, int threshold, int color);
+        void calculateVisibleParts(cv::Mat &outImg);
+        void two_image_differencing(const cv::Mat &img1, const cv::Mat &img2, cv::Mat &outImage, int threshold, int color);
 };
 

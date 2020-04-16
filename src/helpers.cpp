@@ -8,6 +8,46 @@ using namespace cv;
 
 int pixel_threshold = 30;
 
+Vec2f calculate_direction2(cv::Mat& image) {
+    cv::Vec2i start_point(0, 0);
+    cv::Vec2i end_point(0, 0);
+    int before_points = 0;
+    int after_points = 0;
+
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            if (image.at<uchar>(i, j) == 105) {
+                start_point.val[0] += i;
+                start_point.val[1] += j;
+                before_points++;
+            }
+
+            if (image.at<uchar>(i, j) == 190) {
+                end_point.val[0] += i;
+                end_point.val[1] += j;
+                after_points++;
+            }
+
+            if (image.at<uchar>(i, j) == 255) {
+                start_point.val[0] += i;
+                start_point.val[1] += j;
+                end_point.val[0] += i;
+                end_point.val[1] += j;
+            }
+        }
+    }
+
+    end_point /= after_points;
+    start_point /= before_points;
+
+    cv::Vec2f direction = end_point - start_point;
+    float length = sqrt(direction.dot(direction));
+
+    return direction / length;
+
+}
+
+
 Vec2f calculate_direction(cv::Mat& image) {
     cv::Vec2i start_point(0, 0);
     cv::Vec2i end_point(0, 0);
@@ -61,6 +101,7 @@ Vec2f calculate_direction(cv::Mat& image) {
         return direction / length;
     }
 }
+
 double findMedian(vector<float> a)
 {
     int n = a.size();
@@ -73,9 +114,6 @@ double findMedian(vector<float> a)
 
     return (double)(a[(n - 1) / 2] + a[n / 2]) / 2.0;
 }
-
-
-
 
 void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img, uchar mcolor) {
     //recursion_depth++;

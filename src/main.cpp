@@ -12,7 +12,9 @@
 #include <helpers.h>
 #include <chrono> 
 #include <numeric> 
-#include <img_proc_func.h>
+
+#include <ThreeFrameProcesser.h>
+#include <BlobExtractor.h>
 
 using namespace cv;
 using namespace std;
@@ -28,6 +30,8 @@ static void threshold_trackbar (int , void* )
 
     ThreeFrameProcesser tfp(current, previous, pre_previous);
     tfp.calculateDifferences(threshold_slider);
+    cv::Mat visible_parts;
+    tfp.calculateVisibleParts(visible_parts);
 
     auto start = high_resolution_clock::now();
     cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
@@ -47,24 +51,43 @@ static void threshold_trackbar (int , void* )
         cout << "Calculating all matches from brute force: " << duration_cast<milliseconds>(high_resolution_clock::now() - start).count() << endl;
         CHECK_IMAGE("WholeImageBruteForce", match_results, false);
     }
-
+    LOG("TEST");
+    LOG(tfp.diff_img.size());
     imshow("Diff", tfp.diff_img);
-
-    cv::Mat visible_parts;
-    tfp.calculateVisibleParts(visible_parts);
+    LOG("TEST2");
     namedWindow("VisiblePart1", WINDOW_FREERATIO);
     imshow("VisiblePart1", visible_parts);
 
-
+////
     start = high_resolution_clock::now();
-    Mat diff_img_enlarged = Mat::zeros(Size(3*diff_img.cols, 3*diff_img.rows), CV_8U);
-    Rect diff_img_clone_center = Rect(diff_img.cols, diff_img.rows, diff_img.cols,diff_img.rows);
-    diff_img.copyTo(diff_img_enlarged(diff_img_clone_center));
+    Mat diff_img_enlarged = Mat::zeros(Size(3*tfp.diff_img.cols, 3*tfp.diff_img.rows), CV_8U);
+    Rect diff_img_clone_center = Rect(tfp.diff_img.cols, tfp.diff_img.rows, tfp.diff_img.cols,tfp.diff_img.rows);
+    tfp.diff_img.copyTo(diff_img_enlarged(diff_img_clone_center));
 
     Mat diff_img_white_only;
     cv::threshold(diff_img_enlarged, diff_img_white_only, 254, 255, cv::THRESH_BINARY);
     cv::findNonZero(diff_img_white_only, white_pixels);
     cout << "White pixel extraction: " << duration_cast<milliseconds>(high_resolution_clock::now() - start).count() << endl;
+
+
+
+    Mat hsv_image = Mat::zeros(Size(tfp.diff_img.cols, tfp.diff_img.rows), CV_8UC3);   
+    BlobExtractor blextr(tfp.diff_img);
+    blextr.ExtractBlobs();
+    for (int i = 0; i < blextr.num_of_blobs; i++){
+        vector<KeyPoint> kp_cur, kp_prev;
+        vector<Mat> des_per_template_cur(blextr.num_of_blobs), des_per_template_prev(blextr.num_of_blobs);
+        Vec2f dir = calculate_direction2(blextr.GetBlob(i));
+
+        int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / PI);
+        if (angle < 0) angle += 360;
+        cout << "Direction of Blob No. " << i << " is " << angle;
+
+
+    }
+
+    //BlobMatcher blmatch; Takes the Rects
+////
 
     templates.clear();
     directions.clear();
@@ -79,7 +102,7 @@ static void threshold_trackbar (int , void* )
     std::cout << "==============" << endl;
     std::vector<float> dir_x, dir_y;
 
-    Mat hsv_image = Mat::zeros(Size(diff_img.cols, diff_img.rows), CV_8UC3);
+
 
 
 
@@ -90,7 +113,7 @@ static void threshold_trackbar (int , void* )
         if (diff_img_enlarged.at<uchar>(pixel) == 0)
             continue;
 
-        Mat template_img = Mat::zeros(Size(diff_img.cols, diff_img.rows), CV_8U);
+        Mat template_img = Mat::zeros(Size(tfp.diff_img.cols, tfp.diff_img.rows), CV_8U);
 
         start = high_resolution_clock::now();
         recursion_func(pixel, diff_img_enlarged, 255, template_img);
@@ -100,9 +123,9 @@ static void threshold_trackbar (int , void* )
         start = high_resolution_clock::now();
         Mat blob_img;
 
-        bitwise_and(diff_img, template_img, blob_img); 
+        bitwise_and(tfp.diff_img, template_img, blob_img); 
         Rect bounding_rect = boundingRect(blob_img);                                                                                                        
-        if (bounding_rect.x == 0 || bounding_rect.y == 0 || bounding_rect.x + bounding_rect.width == diff_img.cols || bounding_rect.y + bounding_rect.height == diff_img.rows) {
+        if (bounding_rect.x == 0 || bounding_rect.y == 0 || bounding_rect.x + bounding_rect.width == tfp.diff_img.cols || bounding_rect.y + bounding_rect.height == tfp.diff_img.rows) {
             continue;
         }
 
@@ -131,7 +154,7 @@ static void threshold_trackbar (int , void* )
                 angle += 360;
             }
             angle_per_blob.push_back(angle);
-            Mat temp(Size(diff_img.cols, diff_img.rows), CV_8UC3, cv::Scalar(angle/2, 255, 255));
+            Mat temp(Size(tfp.diff_img.cols, tfp.diff_img.rows), CV_8UC3, cv::Scalar(angle/2, 255, 255));
             Mat template_img_3d;
             cv::cvtColor(template_img, template_img_3d, cv::COLOR_GRAY2RGB);
 

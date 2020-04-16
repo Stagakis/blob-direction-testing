@@ -26,11 +26,13 @@ add_executable(Blob_direction
 src/main.cpp 
 src/ORBextractor.cc 
 src/helpers.cpp  
-src/img_proc_func.cpp
+src/ThreeFrameProcesser.cpp
+src/BlobExtractor.cpp
 
 include/helpers.h
 include/ORBextractor.h
-include/img_proc_func.h
+include/ThreeFrameProcesser.h
+include//BlobExtractor.h
 ) 
 
 target_link_libraries( Blob_direction ${OpenCV_LIBS} )
