@@ -34,7 +34,6 @@ Mat current_greyscale, previous_greyscale;
 
 ORB_SLAM2::ORBextractor* ORBextractorLeft;
 std::vector<cv::Mat> images;
-std::vector<Point> white_pixels;
 int frame_slider = 30; // 223;
 int threshold_slider = 40;
 int recursion_depth = 0;
@@ -53,7 +52,6 @@ vector<KeyPoint> kp_cur, kp_prev;
 Mat des_cur, des_prev;
 
 std::vector<cv::Mat> templates;
-std::vector<Vec2f> directions;
-std::vector<float> angle_per_blob;
-
-std::vector<cv::Mat> blobs;
+//std::vector<Vec2f> directions;
+//std::vector<float> angle_per_blob;
+//std::vector<cv::Mat> blobs;

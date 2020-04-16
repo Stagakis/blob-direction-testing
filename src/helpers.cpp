@@ -1,12 +1,22 @@
 #include <iostream>
 #include <helpers.h>
-
+#include <opencv2/imgproc/imgproc.hpp>
 
 using namespace std;
 using namespace cv;
 
 
 int pixel_threshold = 30;
+
+void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img){
+
+    Mat temp(Size(hsv_img.cols, hsv_img.rows), CV_8UC3, cv::Scalar(angle/2, 255, 255));
+    Mat template_img_3d;
+    cv::cvtColor(mask_img, template_img_3d, cv::COLOR_GRAY2RGB);
+
+    bitwise_and(template_img_3d, temp, temp);
+    add(temp, hsv_img, hsv_img);
+}
 
 Vec2f calculate_direction2(cv::Mat& image) {
     cv::Vec2i start_point(0, 0);

@@ -15,6 +15,8 @@ void BlobExtractor::ExtractBlobs(){
 
     cv::Mat diff_img_white_only;
     cv::threshold(diff_img_enlarged, diff_img_white_only, 254, 255, cv::THRESH_BINARY);
+
+    std::vector<cv::Point> white_pixels;
     cv::findNonZero(diff_img_white_only, white_pixels);
 
     //std::cout << "White pixel extraction: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
@@ -47,6 +49,7 @@ void BlobExtractor::ExtractBlobs(){
         //Check for validity of blob and append Rect to list if valid
         if(isValid(blob_img_cropped)){
             blob_rects.push_back(bounding_rect);
+            blob_img_mask.push_back(binary_mask_image);
             add(single_blob_img, blob_img, blob_img);
             num_of_blobs++;
         }
@@ -103,9 +106,8 @@ void BlobExtractor::recursion_func(cv::Point pixel, cv::Mat& img, uchar blob_num
     recursion_func(cv::Point(pixel.x - 1, pixel.y + 0), img, blob_number, template_img, current_color);
 }
 
-cv::Mat& BlobExtractor::GetBlob(int index){
-    cv::Mat temp = blob_img(blob_rects[index]);
-    return temp;
+void BlobExtractor::GetBlob(int index, cv::Mat& outImage){
+    outImage = blob_img(blob_rects[index]);
 }
 
 cv::Mat& BlobExtractor::GetBlobDilated(int index, int dilation_kernel_size){
