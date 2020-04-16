@@ -28,11 +28,6 @@ static void threshold_trackbar (int , void* )
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
 
-    ThreeFrameProcesser tfp(current, previous, pre_previous);
-    tfp.calculateDifferences(threshold_slider);
-    cv::Mat visible_parts;
-    tfp.calculateVisibleParts(visible_parts);
-
     auto start = high_resolution_clock::now();
     cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
     ORBextractorLeft->operator()(current_greyscale, NULL, kp_cur, des_cur);
@@ -52,10 +47,11 @@ static void threshold_trackbar (int , void* )
         CHECK_IMAGE("WholeImageBruteForce", match_results, false);
     }
 
-    imshow("Diff", tfp.diff_img);
-    namedWindow("VisiblePart1", WINDOW_FREERATIO);
-    imshow("VisiblePart1", visible_parts);
-
+    ThreeFrameProcesser tfp(current, previous, pre_previous);
+    tfp.calculateDifferences(threshold_slider);
+    cv::Mat visible_parts;
+    tfp.calculateVisibleParts(visible_parts);
+    
     Mat hsv_image = Mat::zeros(Size(tfp.diff_img.cols, tfp.diff_img.rows), CV_8UC3);   
 
     BlobExtractor blextr(tfp.diff_img);
@@ -99,6 +95,13 @@ static void threshold_trackbar (int , void* )
         CHECK_IMAGE("Matches", match_results, true);
     }
 
+
+    std::cout << "Blob Number: " << templates.size() << endl;
+
+    //---------------WINDOW SHOWING ------------------------------//
+    imshow("Diff", tfp.diff_img);
+    namedWindow("VisiblePart1", WINDOW_FREERATIO);
+    imshow("VisiblePart1", visible_parts);
     cv::destroyWindow("Templates");
     cv::namedWindow("Templates", WINDOW_FREERATIO);
     if (templates.size() > 0) {
@@ -107,7 +110,6 @@ static void threshold_trackbar (int , void* )
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
     CHECK_IMAGE("HSV", hsv_image, false);
 
-    std::cout << "Blob Number: " << templates.size() << endl;
 }
 
 static void frame_trackbar ( int , void* )
