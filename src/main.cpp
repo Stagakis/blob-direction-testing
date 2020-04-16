@@ -64,11 +64,17 @@ static void threshold_trackbar (int , void* )
 
     LOG("Iterating over Blobs");
     templates.clear();
-    for (int i = 0; i < blextr.num_of_blobs; i++){
-        templates.push_back(blextr.blob_img_mask[i]);
 
-        vector<KeyPoint> kp_cur, kp_prev;
-        vector<Mat> des_per_template_cur(blextr.num_of_blobs), des_per_template_prev(blextr.num_of_blobs);
+    for (int i = 0; i < blextr.num_of_blobs; i++){
+        vector<KeyPoint> kp_cur_blob, kp_prev_blob;
+        Mat des_cur_blob, des_prev_blob;
+        std::vector< DMatch > matches;
+
+        templates.push_back(blextr.blob_img_mask[i]);
+        filter_keypoints(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blextr.blob_img_mask[i]);
+        filter_keypoints(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blextr.blob_img_mask[i]);
+        if (kp_cur_blob.size() == 0 || kp_prev_blob.size() == 0)
+            continue;
 
         cv::Mat blob_img;
         blextr.GetBlob(i, blob_img);
@@ -76,37 +82,37 @@ static void threshold_trackbar (int , void* )
  
         int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / PI);
         if (angle < 0) angle += 360;
-        cout << "Direction(angle) of Blob No. " << i << " is " << angle;
+        cout << "Direction(angle) of Blob No. " << i << " is " << angle << endl;;
         update_hsv_image(hsv_image, angle, blextr.blob_img_mask[i]);
 
+        auto bf = BFMatcher(cv::NORM_HAMMING, true);
+        //Train: past, Query: present
+        bf.match(des_prev_blob, des_cur_blob, matches);  
+        cv::Mat match_results;
+        LOG("Size kp_prev_blob: ");
+        LOG(kp_prev_blob.size());
+        LOG("Size kp_cur_blob: ");
+        LOG(kp_cur_blob.size());
+        LOG("Size matches: ");
+        LOG(matches.size());
+        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        CHECK_IMAGE("Matches", match_results, true);
     }
-
-    //BlobMatcher blmatch; Takes the Rects
-
-    calc_dir_time.clear();
-    blob_extractions_time.clear();
-    dilations_time.clear();
-
-    std::cout << "==============" << endl;
-
 
     cv::destroyWindow("Templates");
     cv::namedWindow("Templates", WINDOW_FREERATIO);
     if (templates.size() > 0) {
         cv::createTrackbar("Template", "Templates", &template_value, templates.size() - 1, [](int, void*) { imshow("Templates", templates[template_value]); });
-        
-        /*//
-        std::vector<float> dir_x, dir_y;
-        std::cout << "Median X " << findMedian(dir_x) << endl;
-        std::cout << "Median Y " << findMedian(dir_y) << endl;
-        std::cout << "Median Angle: " << atan2(-findMedian(dir_x), findMedian(dir_y)) * 180 / PI << endl;
-        //*/
     }    
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
     CHECK_IMAGE("HSV", hsv_image, false);
 
-    start = high_resolution_clock::now();
 
+    /*//
+    calc_dir_time.clear();
+    blob_extractions_time.clear();
+    dilations_time.clear();
+    start = high_resolution_clock::now();
     vector<vector<KeyPoint>> kp_per_template_cur(templates.size()), kp_per_template_prev(templates.size());
     vector<Mat> des_per_template_cur(templates.size()), des_per_template_prev(templates.size());
 
@@ -174,12 +180,8 @@ static void threshold_trackbar (int , void* )
     long long my_method_matching_time = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
     cout << "My method of doing correspondences : " << my_method_matching_time  << endl;
 
-    /*//
-    cout << "Mean Recursion Function time: " << MEAN_VALUE(blob_extractions_time) << endl;
-    cout << "Mean Calculate Direction: " << MEAN_VALUE(calc_dir_time) << endl;
-    cout << "Mean Dilation: " << MEAN_VALUE(dilations_time) << endl;
-    cout << "Sum: " << MEAN_VALUE(dilations_time) + MEAN_VALUE(calc_dir_time) + MEAN_VALUE(blob_extractions_time) + my_method_matching_time << endl;
     //*/
+
     std::cout << "Blob Number: " << templates.size() << endl;
 }
 
