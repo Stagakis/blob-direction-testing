@@ -159,7 +159,7 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 
 }
 
-void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, cv::Mat& mask_img){
+void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img){
     for(int i = 0; i< all_kp.size(); i++){
         Point2d test_point = all_kp[i].pt;
         if(mask_img.at<uchar>(test_point) == color || mask_img.at<uchar>(test_point) == 255){

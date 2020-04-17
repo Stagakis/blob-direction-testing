@@ -19,6 +19,6 @@ Vec2f calculate_direction(cv::Mat& image);
 Vec2f calculate_direction2(cv::Mat& image);
 void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img);
 
-void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, cv::Mat& mask_img);
+void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img);
 
 //

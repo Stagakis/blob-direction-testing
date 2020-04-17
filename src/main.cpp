@@ -28,16 +28,16 @@ static void threshold_trackbar (int , void* )
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
 
-    auto start = high_resolution_clock::now();
-    cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
-    ORBextractorLeft->operator()(current_greyscale, NULL, kp_cur, des_cur);
-
-    cv::cvtColor(previous, previous_greyscale, cv::COLOR_BGR2GRAY);
-    ORBextractorLeft->operator()(previous_greyscale, NULL, kp_prev, des_prev);
-    cout << "ORB Extraction time*2: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
-
     {
         auto start = high_resolution_clock::now();
+        cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
+        ORBextractorLeft->operator()(current_greyscale, NULL, kp_cur, des_cur);
+
+        cv::cvtColor(previous, previous_greyscale, cv::COLOR_BGR2GRAY);
+        ORBextractorLeft->operator()(previous_greyscale, NULL, kp_prev, des_prev);
+        cout << "ORB Extraction time*2: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
+
+        start = high_resolution_clock::now();
         auto bf = BFMatcher(cv::NORM_HAMMING, true);
         std::vector< DMatch > matches;
         bf.match(des_prev, des_cur, matches);
@@ -49,6 +49,7 @@ static void threshold_trackbar (int , void* )
 
     ThreeFrameProcesser tfp(current, previous, pre_previous);
     tfp.calculateDifferences(threshold_slider);
+    diff_image = tfp.diff_img;
     cv::Mat visible_parts;
     tfp.calculateVisibleParts(visible_parts);
     
@@ -60,52 +61,86 @@ static void threshold_trackbar (int , void* )
 
     LOG("Iterating over Blobs");
     templates.clear();
-
-    for (int i = 0; i < blextr.num_of_blobs; i++){
+    list_of_match_results.clear();
+    for (int k = 0; k < blextr.num_of_blobs; k++){
         vector<KeyPoint> kp_cur_blob, kp_prev_blob;
         Mat des_cur_blob, des_prev_blob;
         std::vector< DMatch > matches;
 
-        templates.push_back(blextr.blob_img_mask[i]);
-        filter_keypoints(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blextr.blob_img_mask[i]);
-        filter_keypoints(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blextr.blob_img_mask[i]);
+        templates.push_back(blextr.blob_img_mask[k]);
+        LOG("FILTERING KEYPONTS")
+        filter_keypoints(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blextr.blob_img_mask[k]);
+        filter_keypoints(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blextr.blob_img_mask[k]);
         if (kp_cur_blob.size() == 0 || kp_prev_blob.size() == 0)
             continue;
 
         cv::Mat blob_img;
-        blextr.GetBlob(i, blob_img);
+        blextr.GetBlob(k, blob_img);
         Vec2f dir = calculate_direction2(blob_img);
  
         int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / PI);
         if (angle < 0) angle += 360;
-        cout << "Direction(angle) of Blob No. " << i << " is " << angle << endl;;
-        update_hsv_image(hsv_image, angle, blextr.blob_img_mask[i]);
+        cout << "Direction(angle) of Blob No. " << k << " is " << angle << endl;;
+        update_hsv_image(hsv_image, angle, blextr.blob_img_mask[k]);
 
-        auto bf = BFMatcher(cv::NORM_HAMMING, true);
+        if(kp_prev_blob.size() == 0 || kp_cur_blob.size() == 0)
+            LOG("PEEEEEEEEEETROOOOOOOOOOOOOO!!!!!!!!!!")
+
+        cv::Mat mask_mat = cv::Mat::zeros(Size(kp_prev_blob.size(), kp_cur_blob.size()), CV_8UC1);
+
+        for(int i = 0; i < mask_mat.rows; i++){
+            for (int j = 0 ; j< mask_mat.cols; j++){
+                Point from = kp_prev_blob[i].pt;
+                Point to = kp_cur_blob[j].pt;
+                Vec2f keypoint_dir = Vec2f(to.y - from.y, to.x - from.x) ;
+                int keypont_angle = floor(atan2(-keypoint_dir.val[0], keypoint_dir.val[1]) * 180 / PI);
+                if (keypont_angle < 0) keypont_angle += 360;
+
+                if( abs(keypont_angle - angle) < 20 )
+                {
+                    mask_mat.at<uchar>(i,j) = 1;
+                    cout << "Keypont(angle) "<< " is " << keypont_angle <<endl;
+                }
+            }
+        }
+        mask_mat = mask_mat.t();
+        LOG("Size mask: ");
+        LOG(mask_mat.size());
+        LOG("QuerryDrecriptorSize :");
+        LOG(des_prev_blob.size());
+        LOG("TrainDrecriptorSize :");
+        LOG(des_cur_blob.size());
+        auto bf = BFMatcher().create(cv::NORM_HAMMING, false);
         //Train: past, Query: present
-        bf.match(des_prev_blob, des_cur_blob, matches);  
+        bf->match(des_prev_blob, des_cur_blob, matches, mask_mat);  
         cv::Mat match_results;
-        LOG("Size kp_prev_blob: ");
-        LOG(kp_prev_blob.size());
-        LOG("Size kp_cur_blob: ");
-        LOG(kp_cur_blob.size());
-        LOG("Size matches: ");
-        LOG(matches.size());
-        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        CHECK_IMAGE("Matches", match_results, true);
+        //LOG("Size kp_prev_blob: ");
+        //LOG(kp_prev_blob.size());
+        //LOG("Size kp_cur_blob: ");
+        //LOG(kp_cur_blob.size());
+        //LOG("Size matches: ");
+        //LOG(matches.size());
+        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        //CHECK_IMAGE("Matches", match_results, true);
+        list_of_match_results.push_back(match_results);
     }
 
 
     std::cout << "Blob Number: " << templates.size() << endl;
 
     //---------------WINDOW SHOWING ------------------------------//
-    imshow("Diff", tfp.diff_img);
-    namedWindow("VisiblePart1", WINDOW_FREERATIO);
-    imshow("VisiblePart1", visible_parts);
+    cv::imshow("Diff", tfp.diff_img);
+    cv::namedWindow("VisiblePart1", WINDOW_FREERATIO);
+    cv::imshow("VisiblePart1", visible_parts);
     cv::destroyWindow("Templates");
     cv::namedWindow("Templates", WINDOW_FREERATIO);
-    if (templates.size() > 0) {
-        cv::createTrackbar("Template", "Templates", &template_value, templates.size() - 1, [](int, void*) { imshow("Templates", templates[template_value]); });
+    if (templates.size() > 1) {
+        cv::createTrackbar("Template", "Templates", &template_value, templates.size() - 1, [](int, void*) -> void { cv::Mat temp; bitwise_and(templates[template_value], diff_image, temp); imshow("Templates", temp); });
+    }    
+    cv::destroyWindow("List_of_matches");
+    cv::namedWindow("List_of_matches", WINDOW_FREERATIO);
+    if (list_of_match_results.size() > 1) {
+        cv::createTrackbar("Match", "List_of_matches", &match_result_value, list_of_match_results.size() - 1, [](int, void*) -> void { imshow("List_of_matches", list_of_match_results[match_result_value]); });
     }    
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
     CHECK_IMAGE("HSV", hsv_image, false);
@@ -190,6 +225,7 @@ void createWindowsAndTrackbars() {
     moveWindow("Control", 1280, 0);
 
     cv::namedWindow("Templates");
+    cv::namedWindow("List_of_matches");
 
     cv::createTrackbar("Frame", "Control", &frame_slider, images.size() - 1, frame_trackbar);
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);

@@ -35,9 +35,10 @@ Mat current_greyscale, previous_greyscale;
 ORB_SLAM2::ORBextractor* ORBextractorLeft;
 std::vector<cv::Mat> images;
 int frame_slider = 30; // 223;
-int threshold_slider = 40;
+int threshold_slider = 65; //40;
 int recursion_depth = 0;
 int template_value = 0;
+int match_result_value = 0;
 
 //Timing variables
 vector<long long> blob_extractions_time;
@@ -45,13 +46,14 @@ vector<long long> calc_dir_time;
 vector<long long> dilations_time;
 
 
-
+cv::Mat diff_image; //This is only for lamda usage
 
 //Keypoints and descriptros of ORB
 vector<KeyPoint> kp_cur, kp_prev;
 Mat des_cur, des_prev;
 
 std::vector<cv::Mat> templates;
+std::vector<cv::Mat> list_of_match_results;
 //std::vector<Vec2f> directions;
 //std::vector<float> angle_per_blob;
 //std::vector<cv::Mat> blobs;
