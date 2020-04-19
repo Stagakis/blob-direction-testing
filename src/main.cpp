@@ -40,10 +40,10 @@ static void threshold_trackbar (int , void* )
         auto bf = BFMatcher(cv::NORM_HAMMING, true);
         std::vector< DMatch > matches;
         bf.match(des_prev, des_cur, matches);
-        Mat match_results;
-        drawMatches(previous, kp_prev, current, kp_cur, matches, match_results, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        Mat match_results_whole_image_orb;
+        drawMatches(previous, kp_prev, current, kp_cur, matches, match_results_whole_image_orb, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         cout << "Calculating all matches from brute force: " << duration_cast<milliseconds>(high_resolution_clock::now() - start).count() << endl;
-        CHECK_IMAGE("WholeImageBruteForce", match_results, false);
+        CHECK_IMAGE(match_results_whole_image_orb, false);
     }
     
     LOG("=====START OF PROCESSING========");
@@ -65,6 +65,7 @@ static void threshold_trackbar (int , void* )
     templates.clear();
     angle_per_blob.clear();
     list_of_match_results.clear();
+    list_of_match_results_withcrosscheck.clear();
     for (int k = 0; k < blextr->num_of_blobs; k++){
         LOG("==K is " << k << " Out of " << blextr->num_of_blobs);
 
@@ -77,7 +78,7 @@ static void threshold_trackbar (int , void* )
         std::vector< DMatch > matches;
 
         auto start = high_resolution_clock::now();
-        blextr->GetBlobDilated(k, blob_img_mask_dilated);
+        blextr->GetBlobDilated(k, blob_img_mask_dilated, 2*dilation_slider+1);
         cout << "TIME Dilate Duration: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
 
         filter_keypoints(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blob_img_mask_dilated);
@@ -97,38 +98,51 @@ static void threshold_trackbar (int , void* )
         start = high_resolution_clock::now();
         bf->match(des_prev_blob, des_cur_blob, matches);
         cout << "TIME With Crosscheck (no Mask): " << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
+        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        list_of_match_results_withcrosscheck.push_back(match_results.clone());
 
         bf = BFMatcher().create(cv::NORM_HAMMING, false);
         cv::Mat mask_mat;
         start = high_resolution_clock::now();
-        create_mask_mat(mask_mat, kp_cur_blob, kp_prev_blob, angle_per_blob.back());
+        create_mask_mat(mask_mat, kp_cur_blob, kp_prev_blob, angle_per_blob.back(), blob_angle_tolerance);
         bf->match(des_prev_blob, des_cur_blob, matches, mask_mat); 
         cout << "TIME Without Crosscheck (Mask): " << duration_cast<microseconds>(high_resolution_clock::now() - start).count() << endl;
 
-        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-
-        list_of_match_results.push_back(match_results);
+        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        list_of_match_results.push_back(match_results.clone());
     }
     //LOG("After drawing matches: ") 
 
     std::cout << "Blob Number: " << templates.size() << endl;
 
     //---------------WINDOW SHOWING ------------------------------//
+    calc_optical_flow_gt(previous, current);
     cv::imshow("Diff", diff_image);
     cv::namedWindow("VisiblePart1", WINDOW_FREERATIO);
     cv::imshow("VisiblePart1", visible_parts);
-    cv::destroyWindow("Templates");
+    //cv::destroyWindow("Templates");
     cv::namedWindow("Templates", WINDOW_FREERATIO);
     if (templates.size() > 1) {
         cv::createTrackbar("Template", "Templates", &template_value, templates.size() - 1, [](int, void*) -> void { cv::Mat temp; bitwise_and(templates[template_value], diff_image, temp); cout <<"Blob Angle: " << angle_per_blob[template_value] << endl; imshow("Templates", temp); });
     }    
-    cv::destroyWindow("List_of_matches");
+
+    //cv::destroyWindow("List_of_matches");
     cv::namedWindow("List_of_matches", WINDOW_FREERATIO);
+    cv::namedWindow("List_of_matches_withcrosscheck", WINDOW_FREERATIO);
+
     if (list_of_match_results.size() > 1) {
-        cv::createTrackbar("Match", "List_of_matches", &match_result_value, list_of_match_results.size() - 1, [](int, void*) -> void { imshow("List_of_matches", list_of_match_results[match_result_value]); });
+        cv::createTrackbar("Match", "Control", &match_result_value, list_of_match_results.size() - 1, 
+        [](int, void*) -> void { 
+            imshow("List_of_matches", list_of_match_results[match_result_value]);
+            imshow("List_of_matches_withcrosscheck", list_of_match_results_withcrosscheck[match_result_value]); 
+            });
+        cv::imshow("List_of_matches", list_of_match_results[match_result_value]);
+        cv::imshow("List_of_matches_withcrosscheck", list_of_match_results_withcrosscheck[match_result_value]);
     }    
+
+
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
-    CHECK_IMAGE("HSV", hsv_image, false);
+    CHECK_IMAGE(hsv_image, false);
 
 }
 
@@ -142,7 +156,6 @@ static void frame_trackbar ( int , void* )
     threshold_trackbar(threshold_slider, 0);
     imshow("RGB_Image", images[frame_slider]);
 }
-
 
 int main(int argc, char** argv )
 {
@@ -173,6 +186,7 @@ int main(int argc, char** argv )
     LOG("Creating Windows");
     createWindowsAndTrackbars();
     LOG("Starting Mainloop");
+    frame_trackbar(0, 0);
     while(1){
         int k = waitKey(0);
         std::cout << k << endl;
@@ -208,9 +222,14 @@ void createWindowsAndTrackbars() {
     resizeWindow("Control", 640, 480);
     moveWindow("Control", 1280, 0);
 
-    cv::namedWindow("Templates");
-    cv::namedWindow("List_of_matches");
+    cv::namedWindow("Templates", WINDOW_FREERATIO);
+    cv::namedWindow("List_of_matches", WINDOW_FREERATIO);
+    cv::namedWindow("List_of_matches_withcrosscheck", WINDOW_FREERATIO);
 
     cv::createTrackbar("Frame", "Control", &frame_slider, images.size() - 1, frame_trackbar);
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);
+    cv::createTrackbar("Dilation(2*X+1)", "Control", &dilation_slider, 3, [](int, void*) -> void {threshold_trackbar(0,0); });
+    cv::createTrackbar("Angle_tolerance(2*X)", "Control", &blob_angle_tolerance, 15, [](int, void*) -> void {threshold_trackbar(0,0); });
+
 }
+

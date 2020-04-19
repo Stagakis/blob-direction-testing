@@ -1,9 +1,15 @@
 #include <iostream>
 #include <helpers.h>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/video.hpp>
+#include <opencv2/highgui.hpp>
 
 using namespace std;
 using namespace cv;
+
+#define GET_VARIABLE_NAME(Variable) (#Variable)
+#define CHECK_IMAGE(mat_name, wait) cv::namedWindow(GET_VARIABLE_NAME(mat_name), cv::WINDOW_KEEPRATIO); cv::imshow(GET_VARIABLE_NAME(mat_name), mat_name); if(wait) cv::waitKey(0);
+
 
 
 int pixel_threshold = 30;
@@ -169,8 +175,8 @@ void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& 
     }
 }
 
-void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<KeyPoint>& kp_prev_blob, int angle){
-    mask_mat = cv::Mat::ones(Size(kp_prev_blob.size(), kp_cur_blob.size()), CV_8UC1);
+void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<KeyPoint>& kp_prev_blob, int angle, int tolerance){
+    mask_mat = cv::Mat::zeros(Size(kp_prev_blob.size(), kp_cur_blob.size()), CV_8UC1);
     for(int i = 0; i < mask_mat.rows; i++){
         for (int j = 0 ; j< mask_mat.cols; j++){
             Point from = kp_prev_blob[i].pt;
@@ -179,7 +185,7 @@ void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<Ke
             int keypont_angle = floor(atan2(-keypoint_dir.val[0], keypoint_dir.val[1]) * 180 / 3.14159265);
             if (keypont_angle < 0) keypont_angle += 360;
 
-            if( abs(keypont_angle - angle) < 5 )
+            if( abs(keypont_angle - angle) < tolerance )
             {
                 mask_mat.at<uchar>(i,j) = 1;
                 //cout << "Keypont(angle) "<< " is " << keypont_angle <<endl;
@@ -198,4 +204,31 @@ int calculate_angle_by_com(cv::Mat& blob_image_bb){
     int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
     if (angle < 0) angle += 360;
     return angle;
+}
+
+void calc_optical_flow_gt(cv::Mat& frame1, cv::Mat& frame2){
+    Mat prvs;
+    Mat next;
+    cvtColor(frame1, prvs, COLOR_BGR2GRAY);
+    cvtColor(frame2, next, COLOR_BGR2GRAY);
+
+    cvtColor(frame2, next, COLOR_BGR2GRAY);
+    Mat flow(prvs.size(), CV_32FC2);
+    calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+    // visualization
+    Mat flow_parts[2];
+    split(flow, flow_parts);
+    Mat magnitude, angle, magn_norm;
+    cartToPolar(flow_parts[1], -flow_parts[0], magnitude, angle, true);
+    normalize(magnitude, magn_norm, 0.0f, 1.0f, NORM_MINMAX);
+    angle *= ((1.f / 360.f) * (180.f / 255.f));
+    //build hsv image
+    Mat _hsv[3], hsv, hsv8, optical_flow_gt;
+    _hsv[0] = angle;
+    _hsv[1] = Mat::ones(angle.size(), CV_32F);
+    _hsv[2] = magn_norm;
+    merge(_hsv, 3, hsv);
+    hsv.convertTo(hsv8, CV_8U, 255.0);
+    cvtColor(hsv8, optical_flow_gt, COLOR_HSV2BGR);
+    CHECK_IMAGE(optical_flow_gt, false);
 }

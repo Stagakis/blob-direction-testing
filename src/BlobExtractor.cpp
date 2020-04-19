@@ -1,6 +1,9 @@
 #include <BlobExtractor.h>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <iostream>
+
+#define CHECK_IMAGE(name, x, wait) cv::namedWindow(name, cv::WINDOW_KEEPRATIO); cv::imshow(name, x); if(wait) cv::waitKey(0);
 
 BlobExtractor::BlobExtractor(cv::Mat _diff_img, cv::Mat _diff_img_cur_prev, cv::Mat _diff_img_prev_preprev):
 diff_img(_diff_img), 
@@ -129,15 +132,17 @@ void BlobExtractor::GetBlobDilated(int index, cv::Mat& outImage, int dilation_ke
     dilated_rect.width += 2*offset;
     dilated_rect.height += 2*offset;
     //*/
-    
+
     cv::Mat mask1, mask2;
     cv::bitwise_and(diff_img_cur_prev,  blob_img_mask[index], mask1);
     cv::dilate(mask1(dilated_rect), mask1(dilated_rect), element);
+    //CHECK_IMAGE("diff_img_cur_prev", mask1, false);
 
     cv::bitwise_and(diff_img_prev_preprev,  blob_img_mask[index], mask2);
     cv::dilate(mask2(dilated_rect), mask2(dilated_rect), element);
+    //CHECK_IMAGE("diff_img_prev_preprev", mask2, false);
 
     cv::add(mask1, mask2, outImage);
-
+    //CHECK_IMAGE("DILATEDOUTIMAGE", outImage, true);
 
 }
