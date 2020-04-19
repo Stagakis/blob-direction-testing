@@ -2,8 +2,13 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
 
-BlobExtractor::BlobExtractor(cv::Mat _diff_img):diff_img(_diff_img){
+BlobExtractor::BlobExtractor(cv::Mat _diff_img, cv::Mat _diff_img_cur_prev, cv::Mat _diff_img_prev_preprev):
+diff_img(_diff_img), 
+diff_img_cur_prev(_diff_img_cur_prev),
+diff_img_prev_preprev(_diff_img_prev_preprev)
+{
     blob_img = cv::Mat::zeros(cv::Size(diff_img.cols, diff_img.rows), CV_8U);
+    num_of_blobs = 0;
 }
 
 void BlobExtractor::ExtractBlobs(){
@@ -110,19 +115,29 @@ void BlobExtractor::GetBlob(int index, cv::Mat& outImage){
     outImage = blob_img(blob_rects[index]);
 }
 
-cv::Mat& BlobExtractor::GetBlobDilated(int index, int dilation_kernel_size){
+void BlobExtractor::GetBlobDilated(int index, cv::Mat& outImage, int dilation_kernel_size){
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT,
             cv::Size(dilation_kernel_size, dilation_kernel_size));
 
+
+    //*
     cv::Rect dilated_rect;
+    int offset = dilation_kernel_size/2;
     dilated_rect = blob_rects[index];
-    dilated_rect.x -= dilation_kernel_size/2;
-    dilated_rect.y -= dilation_kernel_size/2;
-    dilated_rect.width += dilation_kernel_size - 1;
-    dilated_rect.height += dilation_kernel_size - 1;
+    dilated_rect.x -= offset;
+    dilated_rect.y -= offset;
+    dilated_rect.width += 2*offset;
+    dilated_rect.height += 2*offset;
+    //*/
+    
+    cv::Mat mask1, mask2;
+    cv::bitwise_and(diff_img_cur_prev,  blob_img_mask[index], mask1);
+    cv::dilate(mask1(dilated_rect), mask1(dilated_rect), element);
 
-    cv::Mat temp;
-    cv::dilate(blob_img(dilated_rect), temp, element);
+    cv::bitwise_and(diff_img_prev_preprev,  blob_img_mask[index], mask2);
+    cv::dilate(mask2(dilated_rect), mask2(dilated_rect), element);
 
-    return temp;
+    cv::add(mask1, mask2, outImage);
+
+
 }

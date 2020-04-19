@@ -18,7 +18,7 @@ void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img){
     add(temp, hsv_img, hsv_img);
 }
 
-Vec2f calculate_direction2(cv::Mat& image) {
+Vec2f calculate_direction_com(cv::Mat& image) {
     cv::Vec2i start_point(0, 0);
     cv::Vec2i end_point(0, 0);
     int before_points = 0;
@@ -167,4 +167,35 @@ void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& 
             out_des.push_back(all_des.row(i));
         }
     }
+}
+
+void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<KeyPoint>& kp_prev_blob, int angle){
+    mask_mat = cv::Mat::ones(Size(kp_prev_blob.size(), kp_cur_blob.size()), CV_8UC1);
+    for(int i = 0; i < mask_mat.rows; i++){
+        for (int j = 0 ; j< mask_mat.cols; j++){
+            Point from = kp_prev_blob[i].pt;
+            Point to = kp_cur_blob[j].pt;
+            Vec2f keypoint_dir = Vec2f(to.y - from.y, to.x - from.x);
+            int keypont_angle = floor(atan2(-keypoint_dir.val[0], keypoint_dir.val[1]) * 180 / 3.14159265);
+            if (keypont_angle < 0) keypont_angle += 360;
+
+            if( abs(keypont_angle - angle) < 5 )
+            {
+                mask_mat.at<uchar>(i,j) = 1;
+                //cout << "Keypont(angle) "<< " is " << keypont_angle <<endl;
+            }
+        }
+    }
+    cout<< "kp_prev_blob Size: " << kp_prev_blob.size() << endl;
+    cout<< "kp_cur_blob Size: " << kp_cur_blob.size() << endl;
+    cout<< "MASK Size: " << mask_mat.size() << endl;
+    mask_mat = mask_mat.t();
+}
+
+int calculate_angle_by_com(cv::Mat& blob_image_bb){
+
+    Vec2f dir = calculate_direction_com(blob_image_bb);
+    int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
+    if (angle < 0) angle += 360;
+    return angle;
 }

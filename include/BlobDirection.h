@@ -11,6 +11,9 @@
 #include <math.h>
 #include <ORBextractor.h>
 
+#include <ThreeFrameProcesser.h>
+#include <BlobExtractor.h>
+
 using namespace cv;
 using namespace std;
 
@@ -33,9 +36,12 @@ Mat current_greyscale, previous_greyscale;
 
 
 ORB_SLAM2::ORBextractor* ORBextractorLeft;
+BlobExtractor* blextr;
+ThreeFrameProcesser* tfp;
+
 std::vector<cv::Mat> images;
 int frame_slider = 30; // 223;
-int threshold_slider = 65; //40;
+int threshold_slider = 52; //40;
 int recursion_depth = 0;
 int template_value = 0;
 int match_result_value = 0;
@@ -55,5 +61,5 @@ Mat des_cur, des_prev;
 std::vector<cv::Mat> templates;
 std::vector<cv::Mat> list_of_match_results;
 //std::vector<Vec2f> directions;
-//std::vector<float> angle_per_blob;
+std::vector<int> angle_per_blob;
 //std::vector<cv::Mat> blobs;
