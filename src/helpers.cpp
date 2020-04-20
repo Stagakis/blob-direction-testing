@@ -203,6 +203,7 @@ int calculate_angle_by_com(cv::Mat& blob_image_bb){
     Vec2f dir = calculate_direction_com(blob_image_bb);
     int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
     if (angle < 0) angle += 360;
+    //cout << "Blob angle is: " << angle << endl;
     return angle;
 }
 

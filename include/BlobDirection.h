@@ -44,7 +44,7 @@ ThreeFrameProcesser* tfp;
 
 std::vector<cv::Mat> images;
 int frame_slider = 31; // 223;
-int threshold_slider = 52; //40;
+int threshold_slider = 65;// 52; //40;
 int dilation_slider = 1; //40;
 int recursion_depth = 0;
 int template_value = 0;
@@ -68,4 +68,19 @@ std::vector<cv::Mat> list_of_match_results;
 std::vector<cv::Mat> list_of_match_results_withcrosscheck;
 //std::vector<Vec2f> directions;
 std::vector<int> angle_per_blob;
-//std::vector<cv::Mat> blobs;
+
+int brute_force_whole_img_num_of_matches;
+int mask_num_of_matches;
+int crosscheck_num_of_matches;
+
+
+//TIMING VARIABLES
+unsigned long long time_extracing_orb_features;
+unsigned long long time_blob_extraction;
+unsigned long long time_three_frame_differencing;
+unsigned long long time_dilation, time_dilation_total;
+unsigned long long time_keypoint_filtering, time_keypoint_filtering_total;
+unsigned long long time_angle_calculation, time_angle_calculation_total;
+unsigned long long time_matching_without_mask, time_matching_without_mask_total;
+unsigned long long time_matching_with_mask, time_matching_with_mask_total;
+unsigned long long time_orb_brute_force_whole_image;
