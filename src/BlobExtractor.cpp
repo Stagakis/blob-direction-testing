@@ -11,6 +11,7 @@ diff_img_cur_prev(_diff_img_cur_prev),
 diff_img_prev_preprev(_diff_img_prev_preprev)
 {
     blob_img = cv::Mat::zeros(cv::Size(diff_img.cols, diff_img.rows), CV_8U);
+    unfiltered_blob_img = cv::Mat::zeros(cv::Size(diff_img.cols, diff_img.rows), CV_8U);
     num_of_blobs = 0;
 }
 
@@ -54,6 +55,7 @@ void BlobExtractor::ExtractBlobs(){
 
         cv::Mat blob_img_cropped = single_blob_img(bounding_rect);
 
+        add(single_blob_img, unfiltered_blob_img, unfiltered_blob_img);
         //Check for validity of blob and append Rect to list if valid
         if(isValid(blob_img_cropped)){
             blob_rects.push_back(bounding_rect);

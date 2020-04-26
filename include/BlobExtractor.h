@@ -9,7 +9,8 @@ class BlobExtractor{
     public:
         cv::Mat diff_img;
         cv::Mat diff_img_cur_prev, diff_img_prev_preprev;
-        cv::Mat blob_img;
+        cv::Mat blob_img; //filtered diff_img
+        cv::Mat unfiltered_blob_img;
         std::vector<cv::Rect> blob_rects;
         std::vector<cv::Mat> blob_img_mask; //Binary image with the same size as blob_img
         int num_of_blobs;

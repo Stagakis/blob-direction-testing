@@ -165,12 +165,21 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 
 }
 
-void filter_keypoints(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img){
+void filter_keypoints_and_descriptors(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img){
     for(int i = 0; i< all_kp.size(); i++){
         Point2d test_point = all_kp[i].pt;
         if(mask_img.at<uchar>(test_point) == color || mask_img.at<uchar>(test_point) == 255){
             out_kp.push_back(all_kp[i]);
             out_des.push_back(all_des.row(i));
+        }
+    }
+}
+
+void filter_keypoints(vector<KeyPoint>& all_kp, vector<KeyPoint>& out_kp, int color, const cv::Mat& mask_img){
+    for(int i = 0; i< all_kp.size(); i++){
+        Point2d test_point = all_kp[i].pt;
+        if(mask_img.at<uchar>(test_point) == color || mask_img.at<uchar>(test_point) == 255){
+            out_kp.push_back(all_kp[i]);
         }
     }
 }
@@ -207,7 +216,7 @@ int calculate_angle_by_com(cv::Mat& blob_image_bb){
     return angle;
 }
 
-void calc_optical_flow_gt(cv::Mat& frame1, cv::Mat& frame2){
+void calc_optical_flow_gt(cv::Mat& frame1, cv::Mat& frame2, cv::Mat& out){
     Mat prvs;
     Mat next;
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
@@ -230,6 +239,6 @@ void calc_optical_flow_gt(cv::Mat& frame1, cv::Mat& frame2){
     _hsv[2] = magn_norm;
     merge(_hsv, 3, hsv);
     hsv.convertTo(hsv8, CV_8U, 255.0);
-    cvtColor(hsv8, optical_flow_gt, COLOR_HSV2BGR);
-    CHECK_IMAGE(optical_flow_gt, false);
+    cvtColor(hsv8, out, COLOR_HSV2BGR);
+
 }
