@@ -27,6 +27,7 @@ static void threshold_trackbar (int , void* )
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
 
+    Mat match_results_whole_image_orb;
     {
         auto start = high_resolution_clock::now();
         cv::cvtColor(current, current_greyscale, cv::COLOR_BGR2GRAY);
@@ -41,7 +42,7 @@ static void threshold_trackbar (int , void* )
         auto bf = BFMatcher(cv::NORM_HAMMING, true);
         std::vector< DMatch > matches;
         bf.match(des_prev, des_cur, matches);
-        Mat match_results_whole_image_orb;
+
         drawMatches(previous, kp_prev, current, kp_cur, matches, match_results_whole_image_orb, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         time_orb_brute_force_whole_image = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         cout << "Calculating all matches from brute force: " <<  time_orb_brute_force_whole_image << endl;
@@ -81,6 +82,7 @@ static void threshold_trackbar (int , void* )
     start = high_resolution_clock::now();
     blextr = new BlobExtractor(diff_image, tfp->diff_cur_prev, tfp->diff_prev_preprev);
     blextr->ExtractBlobs();
+    CHECK_IMAGE(blextr->unfiltered_blob_img, false);
     time_blob_extraction = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
     LOG("TIME taken for extraction: " << time_blob_extraction)
     LOG("Blobs found from Extraction: " << blextr->num_of_blobs)
@@ -186,6 +188,7 @@ static void threshold_trackbar (int , void* )
     CHECK_IMAGE(hsv_image, false);
 
     //------------For video making
+    /*/
     LOG("Video Making")
     cv::Mat video_temp;
     cv::Mat matArray[] = {pre_previous,
@@ -215,6 +218,8 @@ static void threshold_trackbar (int , void* )
                     current_with_kp};
     cv::hconcat(matArray3, 3, video_temp);
     cv::imwrite("keypoint_images_with_blob_middle/" + to_string(frame_slider) + ".jpg", video_temp);
+    cv::hconcat(prev_with_kp, current_with_kp, video_temp);
+    cv::imwrite("petros" + to_string(frame_slider) + ".jpg", video_temp);
 
     //Drawing with reduced keypoints
     if(blextr->num_of_blobs > 0){
@@ -233,7 +238,7 @@ static void threshold_trackbar (int , void* )
         cv::hconcat(matArray4, 3, video_temp);                
         cv::imwrite("keypoint_images_with_blob_middle_filtered/" + to_string(frame_slider) + ".jpg", video_temp);
     }
-    LOG("TEST TEST")
+
     cv::Mat matches_base;
     cv::hconcat(previous, current, matches_base);     
     cv::Mat matches_mask_total = matches_base.clone(), matches_cross_total = matches_base.clone();
@@ -254,7 +259,28 @@ static void threshold_trackbar (int , void* )
     }
     cv::imwrite("matches_filtered_mask/" + to_string(frame_slider) + ".jpg", matches_cross_total);
 
+    cv::Mat final_part;
+    cv::Mat optical_flow_subwindow;
+    cv::Mat top_subwindow, middle_subwindow, bottom_subwindow;
 
+    cv::hconcat(hsv_image, optical_flow_gt, optical_flow_subwindow);
+
+    cv::Mat temp;
+
+    cv::hconcat(diff_image, blextr->unfiltered_blob_img , temp); 
+    cv::cvtColor(temp, temp, cv::COLOR_GRAY2RGB);
+
+    cv::hconcat(matches_base, temp, top_subwindow);
+    cv::hconcat(match_results_whole_image_orb, optical_flow_subwindow, middle_subwindow);
+    cv::hconcat(matches_mask_total, matches_cross_total, bottom_subwindow);
+
+
+
+    cv::vconcat(top_subwindow, middle_subwindow, final_part);
+    cv::vconcat(final_part, bottom_subwindow, final_part);
+
+    cv::imwrite("final_part/" + to_string(frame_slider) + ".jpg", final_part);
+    //*/
 }
 
 static void frame_trackbar ( int , void* )

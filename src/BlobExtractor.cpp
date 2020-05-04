@@ -48,7 +48,8 @@ void BlobExtractor::ExtractBlobs(){
         cv::Mat single_blob_img;
         bitwise_and(diff_img, binary_mask_image, single_blob_img); 
 
-        cv::Rect bounding_rect = boundingRect(single_blob_img);                                                                                                        
+        cv::Rect bounding_rect = boundingRect(single_blob_img);        
+
         if (bounding_rect.x == 0 || bounding_rect.y == 0 || bounding_rect.x + bounding_rect.width == diff_img.cols || bounding_rect.y + bounding_rect.height == diff_img.rows) {
             continue;
         }
@@ -81,7 +82,7 @@ bool BlobExtractor::isValid(cv::Mat& blob){
         }
     }
     if (before_points + after_points < PIXEL_THRESHOLD 
-    || before_points < 0.5*after_points || after_points < 0.5*before_points
+    || before_points < 0.3*after_points || after_points < 0.3*before_points
     || before_points == 0 || after_points == 0)
         return false;
     else
