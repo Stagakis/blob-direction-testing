@@ -3,7 +3,9 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <iostream>
 
-#define CHECK_IMAGE(name, x, wait) cv::namedWindow(name, cv::WINDOW_KEEPRATIO); cv::imshow(name, x); if(wait) cv::waitKey(0);
+
+#define GET_VARIABLE_NAME(Variable) (#Variable)
+#define CHECK_IMAGE(mat_name, wait) cv::namedWindow(GET_VARIABLE_NAME(mat_name), cv::WINDOW_KEEPRATIO); cv::imshow(GET_VARIABLE_NAME(mat_name), mat_name); if(wait) cv::waitKey(0);
 
 BlobExtractor::BlobExtractor(cv::Mat _diff_img, cv::Mat _diff_img_cur_prev, cv::Mat _diff_img_prev_preprev):
 diff_img(_diff_img), 
@@ -13,6 +15,15 @@ diff_img_prev_preprev(_diff_img_prev_preprev)
     blob_img = cv::Mat::zeros(cv::Size(diff_img.cols, diff_img.rows), CV_8U);
     unfiltered_blob_img = cv::Mat::zeros(cv::Size(diff_img.cols, diff_img.rows), CV_8U);
     num_of_blobs = 0;
+}
+
+void BlobExtractor::Downscale(){
+    scale_factor = 4;
+    cv::resize(diff_img, diff_img, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
+    cv::resize(blob_img, blob_img, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
+    cv::resize(unfiltered_blob_img, unfiltered_blob_img, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
+    cv::resize(diff_img_cur_prev, diff_img_cur_prev, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
+    cv::resize(diff_img_prev_preprev, diff_img_prev_preprev, cv::Size(), 1.0/scale_factor,1.0/scale_factor, CV_INTER_NN);
 }
 
 void BlobExtractor::ExtractBlobs(){
@@ -27,6 +38,8 @@ void BlobExtractor::ExtractBlobs(){
 
     std::vector<cv::Point> white_pixels;
     cv::findNonZero(diff_img_white_only, white_pixels);
+
+    CHECK_IMAGE(diff_img, true);
 
     //std::cout << "White pixel extraction: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
 
@@ -81,7 +94,7 @@ bool BlobExtractor::isValid(cv::Mat& blob){
             }
         }
     }
-    if (before_points + after_points < PIXEL_THRESHOLD 
+    if (before_points + after_points < 0
     || before_points < 0.3*after_points || after_points < 0.3*before_points
     || before_points == 0 || after_points == 0)
         return false;

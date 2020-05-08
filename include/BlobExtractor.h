@@ -14,13 +14,14 @@ class BlobExtractor{
         std::vector<cv::Rect> blob_rects;
         std::vector<cv::Mat> blob_img_mask; //Binary image with the same size as blob_img
         int num_of_blobs;
+        int scale_factor = 1;
 
 
         //BlobExtractor(cv::Mat _diff_img);
         BlobExtractor(cv::Mat _diff_img, cv::Mat _diff_img_cur_prev, cv::Mat _diff_img_prev_preprev);
         void ExtractBlobs();
         void recursion_func(cv::Point pixel, cv::Mat& img, uchar blob_number, cv::Mat& template_img, uchar mcolor = 255);
-
+        void Downscale();
         void GetBlob(int index, cv::Mat& outImage);
         void GetBlobDilated(int index, cv::Mat& outImage, int dilation_kernel_size=3);
         cv::Mat& GetRectOfBlob(int index);

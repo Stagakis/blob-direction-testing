@@ -28,6 +28,7 @@ static void threshold_trackbar (int , void* )
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
 
+
     Mat match_results_whole_image_orb;
     {
         auto start = high_resolution_clock::now();
@@ -79,9 +80,12 @@ static void threshold_trackbar (int , void* )
     
     Mat hsv_image = Mat::zeros(Size(diff_image.cols, diff_image.rows), CV_8UC3);   
 
-    LOG("Extracting Blobs");
+
     start = high_resolution_clock::now();
     blextr = new BlobExtractor(diff_image, tfp->diff_cur_prev, tfp->diff_prev_preprev);
+    LOG("DownScaling");
+    //blextr->Downscale();
+    LOG("Extracting Blobs");
     blextr->ExtractBlobs();
     CHECK_IMAGE(blextr->unfiltered_blob_img, false);
     time_blob_extraction = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
@@ -107,8 +111,8 @@ static void threshold_trackbar (int , void* )
         cout << "TIME Dilate Duration: " << time_dilation << endl;
 
         start = high_resolution_clock::now();
-        filter_keypoints_and_descriptors(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blob_img_mask_dilated);
-        filter_keypoints_and_descriptors(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blob_img_mask_dilated);
+        filter_keypoints_and_descriptors(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blob_img_mask_dilated, blextr->scale_factor);
+        filter_keypoints_and_descriptors(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blob_img_mask_dilated, blextr->scale_factor);
         if (kp_cur_blob.size() == 0 || kp_prev_blob.size() == 0)
             continue;
         
@@ -124,7 +128,7 @@ static void threshold_trackbar (int , void* )
         time_angle_calculation_total = time_angle_calculation;
         cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
 
-        update_hsv_image(hsv_image, angle_per_blob.back(), blextr->blob_img_mask[k]);
+        //update_hsv_image(hsv_image, angle_per_blob.back(), blextr->blob_img_mask[k]);
 
 
         auto bf = BFMatcher().create(cv::NORM_HAMMING, true);
@@ -315,12 +319,16 @@ int main(int argc, char** argv )
     std::cout << "[-1,0] angle " << atan2(-1, 0) * 180 / PI << endl;
     //String img_folder_path = argv[1];
     std::vector<String> fn;
+    int scale_factor = 4;
+
     //glob("C:\\Users\\Stagakis\\Desktop\\rgbd_dataset_freiburg1_xyz\\rgb_short", fn, false);
     glob("../rgb/*png", fn, false);
     images.reserve(fn.size());
     LOG("Loading images");
     for(int i = 0; i < fn.size(); i++){
         Mat img_frame = imread(fn[i]);
+        //cv::resize(img_frame, img_frame, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
+
         cv::resize(img_frame, img_frame, cv::Size(img_frame.cols * 0.5, img_frame.rows * 0.5), 0, 0, CV_INTER_CUBIC);
         images.push_back(img_frame.clone()); 
     }
@@ -364,11 +372,12 @@ void createWindowsAndTrackbars() {
     moveWindow("Control", 1280, 0);
 
     cv::namedWindow("Templates", WINDOW_FREERATIO);
+    //*//
     cv::createTrackbar("Template", "Templates", &template_value, 30, [](int, void*) -> void { 
         if (templates.size() ==0 ) return;
         if(template_value > templates.size() - 1) setTrackbarPos("Template", "Templates", templates.size() - 1);
-        cv::Mat temp; bitwise_and(templates[template_value], diff_image, temp); cout <<"Blob Angle: " << angle_per_blob[template_value] << endl; imshow("Templates", temp); });
-
+        cv::Mat temp; bitwise_and(templates[template_value], blextr->diff_img, temp); cout <<"Blob Angle: " << angle_per_blob[template_value] << endl; imshow("Templates", temp); });
+    //*/
 
     cv::namedWindow("List_of_matches", WINDOW_FREERATIO);
     cv::namedWindow("List_of_matches_withcrosscheck", WINDOW_FREERATIO);
@@ -379,12 +388,12 @@ void createWindowsAndTrackbars() {
             imshow("List_of_matches", list_of_match_results[match_result_value]);
             imshow("List_of_matches_withcrosscheck", list_of_match_results_withcrosscheck[match_result_value]); 
             
-            cv::Mat temp; bitwise_and(templates[match_result_value], diff_image, temp);
+            cv::Mat temp; bitwise_and(templates[match_result_value], blextr->diff_img, temp);
             cout <<"Blob Angle: " << angle_per_blob[match_result_value] << endl; 
             imshow("Templates", temp);
             template_value = match_result_value;
             });
-        setTrackbarPos("Match", "Control", match_result_value);
+    setTrackbarPos("Match", "Control", match_result_value);
 
     cv::createTrackbar("Frame", "Control", &frame_slider, images.size() - 1, frame_trackbar);
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);

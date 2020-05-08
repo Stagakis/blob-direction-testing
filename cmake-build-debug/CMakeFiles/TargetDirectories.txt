@@ -1,0 +1,3 @@
+/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles/Blob_direction.dir
