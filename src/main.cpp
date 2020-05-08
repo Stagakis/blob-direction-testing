@@ -12,6 +12,7 @@
 #include <helpers.h>
 #include <chrono> 
 #include <numeric> 
+#include <ORBmatcher.h>
 
 
 using namespace cv;
@@ -140,7 +141,8 @@ static void threshold_trackbar (int , void* )
         cv::Mat mask_mat;
         start = high_resolution_clock::now();
         create_mask_mat(mask_mat, kp_cur_blob, kp_prev_blob, angle_per_blob.back(), blob_angle_tolerance);
-        bf->match(des_prev_blob, des_cur_blob, matches, mask_mat); 
+        my_matching_method(des_prev_blob, des_cur_blob, matches, mask_mat);
+
         time_matching_with_mask = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_matching_with_mask_total += time_matching_with_mask;
         mask_num_of_matches += matches.size();
@@ -302,6 +304,8 @@ int main(int argc, char** argv )
     int nLevels = fSettings["ORBextractor.nLevels"];
     int fIniThFAST = fSettings["ORBextractor.iniThFAST"];
     int fMinThFAST = fSettings["ORBextractor.minThFAST"];
+
+    //ORB_SLAM2::ORBmatcher* temp = new ORB_SLAM2::ORBmatcher("../Vocabulary/ORBvoc.txt", "../TUM1.yaml" , "../rgb/");
 
     ORBextractorLeft = new ORB_SLAM2::ORBextractor(nFeatures, fScaleFactor, nLevels, fIniThFAST, fMinThFAST);
 

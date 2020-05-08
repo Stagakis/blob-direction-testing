@@ -1,3 +1,0 @@
-/home/stagakis/Desktop/blob-direction/buil/CMakeFiles/rebuild_cache.dir
-/home/stagakis/Desktop/blob-direction/buil/CMakeFiles/Blob_direction.dir
-/home/stagakis/Desktop/blob-direction/buil/CMakeFiles/edit_cache.dir

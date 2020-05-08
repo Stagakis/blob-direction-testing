@@ -3,13 +3,53 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/video.hpp>
 #include <opencv2/highgui.hpp>
-
+#include <opencv2/features2d.hpp>
+#include <opencv2/features2d.hpp>
 using namespace std;
 using namespace cv;
 
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 #define CHECK_IMAGE(mat_name, wait) cv::namedWindow(GET_VARIABLE_NAME(mat_name), cv::WINDOW_KEEPRATIO); cv::imshow(GET_VARIABLE_NAME(mat_name), mat_name); if(wait) cv::waitKey(0);
 
+void my_matching_method(Mat& queryDescriptors, Mat& trainDescriptors, std::vector<DMatch>& matches, InputArray mask){
+    matches.clear();
+    int best_distance;
+    for(int i = 0; i< queryDescriptors.rows; i++){
+        cv::Mat qDesc = queryDescriptors.row(i);
+        int best_dist = 1000000000;
+        int best_index = 0;
+        for(int j = 0; j< trainDescriptors.rows; j++){
+            cv::Mat tDesc = trainDescriptors.row(j);
+            int dist = DescriptorDistance(qDesc, tDesc);
+            if (dist<best_dist){
+                best_index=j;
+                best_dist = dist;
+            }
+        }
+
+        matches.push_back(DMatch(i, best_index, best_dist));
+    }
+}
+
+// Bit set count operation from
+// http://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel
+int DescriptorDistance(const cv::Mat &a, const cv::Mat &b)
+{
+    const int *pa = a.ptr<int32_t>();
+    const int *pb = b.ptr<int32_t>();
+
+    int dist=0;
+
+    for(int i=0; i<8; i++, pa++, pb++)
+    {
+        unsigned  int v = *pa ^ *pb;
+        v = v - ((v >> 1) & 0x55555555);
+        v = (v & 0x33333333) + ((v >> 2) & 0x33333333);
+        dist += (((v + (v >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24;
+    }
+
+    return dist;
+}
 
 
 int pixel_threshold = 30;

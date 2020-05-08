@@ -13,6 +13,8 @@ using namespace cv;
 
 
 // Function for calculating median 
+void my_matching_method(Mat& queryDescriptors, Mat& trainDescriptors, std::vector<DMatch>& matches, InputArray mask=noArray() );
+int DescriptorDistance(const cv::Mat &a, const cv::Mat &b);
 double findMedian(vector<float> a);
 void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img, uchar mcolor = 255);
 Vec2f calculate_direction(cv::Mat& image);
