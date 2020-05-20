@@ -37,9 +37,9 @@ void BlobExtractor::ExtractBlobs(){
     cv::threshold(diff_img_enlarged, diff_img_white_only, 254, 255, cv::THRESH_BINARY);
 
     std::vector<cv::Point> white_pixels;
-    cv::findNonZero(diff_img_white_only, white_pixels);
+    cv::findNonZero(diff_img_enlarged, white_pixels);
 
-    CHECK_IMAGE(diff_img, true);
+    //CHECK_IMAGE(diff_img, true);
 
     //std::cout << "White pixel extraction: " << std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - start).count() << std::endl;
 

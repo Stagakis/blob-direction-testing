@@ -322,7 +322,7 @@ int main(int argc, char** argv )
     int scale_factor = 4;
 
     //glob("C:\\Users\\Stagakis\\Desktop\\rgbd_dataset_freiburg1_xyz\\rgb_short", fn, false);
-    glob("../rgb/*png", fn, false);
+    glob("../rgb_mine/*png", fn, false);
     images.reserve(fn.size());
     LOG("Loading images");
     for(int i = 0; i < fn.size(); i++){
