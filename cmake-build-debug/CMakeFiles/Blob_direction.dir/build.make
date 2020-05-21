@@ -83,126 +83,9 @@ CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/BlobMatcher.cpp -o CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.s
 
-CMakeFiles/Blob_direction.dir/src/Converter.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Converter.cc.o: ../src/Converter.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Blob_direction.dir/src/Converter.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Converter.cc.o -c /home/stagakis/Desktop/blob-direction/src/Converter.cc
-
-CMakeFiles/Blob_direction.dir/src/Converter.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Converter.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Converter.cc > CMakeFiles/Blob_direction.dir/src/Converter.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Converter.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Converter.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Converter.cc -o CMakeFiles/Blob_direction.dir/src/Converter.cc.s
-
-CMakeFiles/Blob_direction.dir/src/Frame.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Frame.cc.o: ../src/Frame.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Blob_direction.dir/src/Frame.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Frame.cc.o -c /home/stagakis/Desktop/blob-direction/src/Frame.cc
-
-CMakeFiles/Blob_direction.dir/src/Frame.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Frame.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Frame.cc > CMakeFiles/Blob_direction.dir/src/Frame.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Frame.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Frame.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Frame.cc -o CMakeFiles/Blob_direction.dir/src/Frame.cc.s
-
-CMakeFiles/Blob_direction.dir/src/Initializer.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Initializer.cc.o: ../src/Initializer.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Blob_direction.dir/src/Initializer.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Initializer.cc.o -c /home/stagakis/Desktop/blob-direction/src/Initializer.cc
-
-CMakeFiles/Blob_direction.dir/src/Initializer.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Initializer.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Initializer.cc > CMakeFiles/Blob_direction.dir/src/Initializer.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Initializer.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Initializer.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Initializer.cc -o CMakeFiles/Blob_direction.dir/src/Initializer.cc.s
-
-CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o: ../src/KeyFrame.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o -c /home/stagakis/Desktop/blob-direction/src/KeyFrame.cc
-
-CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/KeyFrame.cc > CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.i
-
-CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/KeyFrame.cc -o CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.s
-
-CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o: ../src/KeyFrameDatabase.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o -c /home/stagakis/Desktop/blob-direction/src/KeyFrameDatabase.cc
-
-CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/KeyFrameDatabase.cc > CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.i
-
-CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/KeyFrameDatabase.cc -o CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.s
-
-CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o: ../src/LocalMapping.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o -c /home/stagakis/Desktop/blob-direction/src/LocalMapping.cc
-
-CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/LocalMapping.cc > CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.i
-
-CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/LocalMapping.cc -o CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.s
-
-CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o: ../src/LoopClosing.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o -c /home/stagakis/Desktop/blob-direction/src/LoopClosing.cc
-
-CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/LoopClosing.cc > CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.i
-
-CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/LoopClosing.cc -o CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.s
-
-CMakeFiles/Blob_direction.dir/src/Map.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Map.cc.o: ../src/Map.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/Blob_direction.dir/src/Map.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Map.cc.o -c /home/stagakis/Desktop/blob-direction/src/Map.cc
-
-CMakeFiles/Blob_direction.dir/src/Map.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Map.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Map.cc > CMakeFiles/Blob_direction.dir/src/Map.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Map.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Map.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Map.cc -o CMakeFiles/Blob_direction.dir/src/Map.cc.s
-
-CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o: ../src/MapPoint.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o -c /home/stagakis/Desktop/blob-direction/src/MapPoint.cc
-
-CMakeFiles/Blob_direction.dir/src/MapPoint.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/MapPoint.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/MapPoint.cc > CMakeFiles/Blob_direction.dir/src/MapPoint.cc.i
-
-CMakeFiles/Blob_direction.dir/src/MapPoint.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/MapPoint.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/MapPoint.cc -o CMakeFiles/Blob_direction.dir/src/MapPoint.cc.s
-
 CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o: CMakeFiles/Blob_direction.dir/flags.make
 CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o: ../src/ORBextractor.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o -c /home/stagakis/Desktop/blob-direction/src/ORBextractor.cc
 
 CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.i: cmake_force
@@ -213,61 +96,9 @@ CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/ORBextractor.cc -o CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.s
 
-CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o: ../src/ORBmatcher.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o -c /home/stagakis/Desktop/blob-direction/src/ORBmatcher.cc
-
-CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/ORBmatcher.cc > CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.i
-
-CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/ORBmatcher.cc -o CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.s
-
-CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o: ../src/Optimizer.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building CXX object CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o -c /home/stagakis/Desktop/blob-direction/src/Optimizer.cc
-
-CMakeFiles/Blob_direction.dir/src/Optimizer.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Optimizer.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Optimizer.cc > CMakeFiles/Blob_direction.dir/src/Optimizer.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Optimizer.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Optimizer.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Optimizer.cc -o CMakeFiles/Blob_direction.dir/src/Optimizer.cc.s
-
-CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o: ../src/PnPsolver.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building CXX object CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o -c /home/stagakis/Desktop/blob-direction/src/PnPsolver.cc
-
-CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/PnPsolver.cc > CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.i
-
-CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/PnPsolver.cc -o CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.s
-
-CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o: CMakeFiles/Blob_direction.dir/flags.make
-CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o: ../src/Sim3Solver.cc
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building CXX object CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o -c /home/stagakis/Desktop/blob-direction/src/Sim3Solver.cc
-
-CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/stagakis/Desktop/blob-direction/src/Sim3Solver.cc > CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.i
-
-CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/stagakis/Desktop/blob-direction/src/Sim3Solver.cc -o CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.s
-
 CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o: CMakeFiles/Blob_direction.dir/flags.make
 CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o: ../src/ThreeFrameProcesser.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building CXX object CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o -c /home/stagakis/Desktop/blob-direction/src/ThreeFrameProcesser.cpp
 
 CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.i: cmake_force
@@ -280,7 +111,7 @@ CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.s: cmake_force
 
 CMakeFiles/Blob_direction.dir/src/helpers.cpp.o: CMakeFiles/Blob_direction.dir/flags.make
 CMakeFiles/Blob_direction.dir/src/helpers.cpp.o: ../src/helpers.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building CXX object CMakeFiles/Blob_direction.dir/src/helpers.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Blob_direction.dir/src/helpers.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/helpers.cpp.o -c /home/stagakis/Desktop/blob-direction/src/helpers.cpp
 
 CMakeFiles/Blob_direction.dir/src/helpers.cpp.i: cmake_force
@@ -293,7 +124,7 @@ CMakeFiles/Blob_direction.dir/src/helpers.cpp.s: cmake_force
 
 CMakeFiles/Blob_direction.dir/src/main.cpp.o: CMakeFiles/Blob_direction.dir/flags.make
 CMakeFiles/Blob_direction.dir/src/main.cpp.o: ../src/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building CXX object CMakeFiles/Blob_direction.dir/src/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Blob_direction.dir/src/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Blob_direction.dir/src/main.cpp.o -c /home/stagakis/Desktop/blob-direction/src/main.cpp
 
 CMakeFiles/Blob_direction.dir/src/main.cpp.i: cmake_force
@@ -308,20 +139,7 @@ CMakeFiles/Blob_direction.dir/src/main.cpp.s: cmake_force
 Blob_direction_OBJECTS = \
 "CMakeFiles/Blob_direction.dir/src/BlobExtractor.cpp.o" \
 "CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.o" \
-"CMakeFiles/Blob_direction.dir/src/Converter.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/Frame.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/Initializer.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/Map.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o" \
 "CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o" \
-"CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o" \
 "CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o" \
 "CMakeFiles/Blob_direction.dir/src/helpers.cpp.o" \
 "CMakeFiles/Blob_direction.dir/src/main.cpp.o"
@@ -331,20 +149,7 @@ Blob_direction_EXTERNAL_OBJECTS =
 
 Blob_direction: CMakeFiles/Blob_direction.dir/src/BlobExtractor.cpp.o
 Blob_direction: CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Converter.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Frame.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Initializer.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/KeyFrame.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/KeyFrameDatabase.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/LocalMapping.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/LoopClosing.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Map.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/MapPoint.cc.o
 Blob_direction: CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/ORBmatcher.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Optimizer.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/PnPsolver.cc.o
-Blob_direction: CMakeFiles/Blob_direction.dir/src/Sim3Solver.cc.o
 Blob_direction: CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o
 Blob_direction: CMakeFiles/Blob_direction.dir/src/helpers.cpp.o
 Blob_direction: CMakeFiles/Blob_direction.dir/src/main.cpp.o
@@ -386,7 +191,7 @@ Blob_direction: /usr/lib/x86_64-linux-gnu/libz.so
 Blob_direction: /usr/lib/x86_64-linux-gnu/libjpeg.so
 Blob_direction: /usr/lib/x86_64-linux-gnu/libtiff.so
 Blob_direction: CMakeFiles/Blob_direction.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking CXX executable Blob_direction"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/stagakis/Desktop/blob-direction/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable Blob_direction"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Blob_direction.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

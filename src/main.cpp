@@ -1,3 +1,5 @@
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 #include <stdio.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <iostream>
@@ -13,7 +15,7 @@
 #include <chrono> 
 #include <numeric> 
 #include <ORBmatcher.h>
-
+#include <opencv2/core/eigen.hpp>
 
 using namespace cv;
 using namespace std;
@@ -69,90 +71,94 @@ static void threshold_trackbar (int , void* )
     
     
     auto start = high_resolution_clock::now();
-    tfp = new ThreeFrameProcesser(current, previous, pre_previous);
-    tfp->calculateDifferences(threshold_slider);
-    time_three_frame_differencing = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
+    cv::Mat current_gray, prev_gray, preprev_gray;
+    cv::Mat diff_img, cur, prev;
+    cv::Mat diff_cur_prev;
+    cv::Mat diff_prev_preprev;
+
+    cvtColor(current, current_gray,CV_RGB2GRAY);
+    cvtColor(previous, prev_gray,CV_RGB2GRAY);
+    cvtColor(pre_previous, preprev_gray,CV_RGB2GRAY);
+    subtract(current_gray, prev_gray, diff_cur_prev, noArray(), CV_16S);
+    subtract(prev_gray, preprev_gray, diff_prev_preprev, noArray(), CV_16S);
+
+    threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY);
+    threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY);
+    LOG("PETROS");
+    Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b1;
+    Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b2;
+    LOG("PETROS2");
+
+    cv2eigen(cur, b1);
+    cv2eigen(prev, b2);
+    b1 += b2;
+    LOG("PETROS3");
+    eigen2cv(b1, diff_img);
+
+
     LOG("TIME taken for tfp: " << time_three_frame_differencing)
 
-    diff_image = tfp->diff_img;
-    cv::Mat visible_parts;
-    tfp->calculateVisibleParts(visible_parts);
-    
-    Mat hsv_image = Mat::zeros(Size(diff_image.cols, diff_image.rows), CV_8UC3);   
+    Mat hsv_image = Mat::zeros(Size(diff_img.cols, diff_img.rows), CV_8UC3);
 
 
     start = high_resolution_clock::now();
-    blextr = new BlobExtractor(diff_image, tfp->diff_cur_prev, tfp->diff_prev_preprev);
+    blextr = new BlobExtractor(diff_img);
     LOG("DownScaling");
     //blextr->Downscale();
-    LOG("Extracting Blobs");
-    blextr->ExtractBlobs();
-    CHECK_IMAGE(blextr->unfiltered_blob_img, false);
-    time_blob_extraction = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-    LOG("TIME taken for extraction: " << time_blob_extraction)
-    LOG("Blobs found from Extraction: " << blextr->num_of_blobs)
 
+    cv::Mat blob;
+    cv::Rect blob_bb;
     LOG("Iterating over Blobs");
-    for (int k = 0; k < blextr->num_of_blobs; k++){
-        LOG("==K is " << k << " Out of " << blextr->num_of_blobs);
 
-        templates.push_back(blextr->blob_img_mask[k]);
+    templates.clear();
+    list_of_match_results.clear();
+    while(blextr->GetNextBlob(blob, blob_bb)){
+        LOG("==K is " << blextr->num_of_blobs);
 
-        cv::Mat blob_img_mask_dilated;
+        templates.push_back(blob);
+
         cv::Mat match_results;
-        vector<KeyPoint> kp_cur_blob, kp_prev_blob;
-        Mat des_cur_blob, des_prev_blob;
+        vector<size_t> kp_cur_blob, kp_prev_blob;
         std::vector< DMatch > matches;
 
-        auto start = high_resolution_clock::now();
-        blextr->GetBlobDilated(k, blob_img_mask_dilated, 2*dilation_slider+1);
-        time_dilation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-        time_dilation_total += time_dilation;
-        cout << "TIME Dilate Duration: " << time_dilation << endl;
-
         start = high_resolution_clock::now();
-        filter_keypoints_and_descriptors(kp_cur, des_cur, kp_cur_blob, des_cur_blob, 190, blob_img_mask_dilated, blextr->scale_factor);
-        filter_keypoints_and_descriptors(kp_prev, des_prev, kp_prev_blob, des_prev_blob, 105, blob_img_mask_dilated, blextr->scale_factor);
-        if (kp_cur_blob.size() == 0 || kp_prev_blob.size() == 0)
-            continue;
-        
+        filter_keypoints_indeces(kp_cur, kp_cur_blob, THRESHOLD_VALUE_CUR, blob, blob_bb);
+        filter_keypoints_indeces(kp_prev, kp_prev_blob, THRESHOLD_VALUE_PREV, blob, blob_bb);
+/*        if (kp_cur_blob.empty() || kp_prev_blob.empty())
+            continue;*/
         time_keypoint_filtering = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_keypoint_filtering_total += time_keypoint_filtering;
         cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
 
         start = high_resolution_clock::now();
-        cv::Mat blob_img_bb;
-        blextr->GetBlob(k, blob_img_bb);
-        angle_per_blob.push_back(calculate_angle_by_com(blob_img_bb));
+        angle_per_blob.push_back(calculate_angle_by_com(blob(blob_bb)));
         time_angle_calculation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_angle_calculation_total = time_angle_calculation;
         cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
 
-        //update_hsv_image(hsv_image, angle_per_blob.back(), blextr->blob_img_mask[k]);
+        int bestDist = 256;
+        int bestIdx2 = -1;
+        update_hsv_image(hsv_image, angle_per_blob.back(), blob);
+        for(size_t i : kp_prev_blob)
+        {
+            cv::Mat desc1 = des_prev.row(i);
+            for(size_t i2 : kp_cur_blob)
+            {
+                cv::Mat desc2 = des_cur.row(i2);
+                const int dist = DescriptorDistance(desc1,desc2);
+                if(dist<bestDist)
+                {
+                    bestDist=dist;
+                    bestIdx2=i2;
+                }
+            }
+            if(bestDist<=100) {
+                matches.emplace_back(i, bestIdx2, bestDist);
+            }
+        }
 
 
-        auto bf = BFMatcher().create(cv::NORM_HAMMING, true);
-        start = high_resolution_clock::now();
-        bf->match(des_prev_blob, des_cur_blob, matches);
-        time_matching_without_mask = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-        time_matching_without_mask_total += time_matching_without_mask;
-        crosscheck_num_of_matches += matches.size();
-        cout << "TIME With Crosscheck (no Mask): " << time_matching_without_mask << endl;
-        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
-        list_of_match_results_withcrosscheck.push_back(match_results.clone());
-
-        bf = BFMatcher().create(cv::NORM_HAMMING, false);
-        cv::Mat mask_mat;
-        start = high_resolution_clock::now();
-        create_mask_mat(mask_mat, kp_cur_blob, kp_prev_blob, angle_per_blob.back(), blob_angle_tolerance);
-        my_matching_method(des_prev_blob, des_cur_blob, matches, mask_mat);
-
-        time_matching_with_mask = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
-        time_matching_with_mask_total += time_matching_with_mask;
-        mask_num_of_matches += matches.size();
-        cout << "TIME Without Crosscheck (Mask): " << time_matching_with_mask << endl;
-
-        drawMatches(previous, kp_prev_blob, current, kp_cur_blob, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        drawMatches(previous, kp_prev, current, kp_cur, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         list_of_match_results.push_back(match_results.clone());
     }
 
@@ -179,17 +185,14 @@ static void threshold_trackbar (int , void* )
     LOG("Num of matches found                               :        " << brute_force_whole_img_num_of_matches);
     LOG("ORB brute force mean time per match :                       " << time_orb_brute_force_whole_image/((float)brute_force_whole_img_num_of_matches));
     std::cout << "Blob Number: " << templates.size() << endl;
-
+    std::cout << "List of match results: " << list_of_match_results.size() << endl;
 
     //---------------WINDOW SHOWING ------------------------------//
     LOG("Window Showing")
     cv::Mat optical_flow_gt;
     calc_optical_flow_gt(previous, current, optical_flow_gt);
     CHECK_IMAGE(optical_flow_gt, false);
-    cv::imshow("Diff", diff_image);
-    cv::namedWindow("VisiblePart1", WINDOW_FREERATIO);
-    cv::imshow("VisiblePart1", visible_parts);
-
+    cv::imshow("Diff", diff_img);
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
     CHECK_IMAGE(hsv_image, false);
 
@@ -273,7 +276,7 @@ static void threshold_trackbar (int , void* )
 
     cv::Mat temp;
 
-    cv::hconcat(diff_image, blextr->unfiltered_blob_img , temp); 
+    cv::hconcat(diff_img, blextr->unfiltered_blob_img , temp);
     cv::cvtColor(temp, temp, cv::COLOR_GRAY2RGB);
 
     cv::hconcat(matches_base, temp, top_subwindow);
@@ -375,8 +378,8 @@ void createWindowsAndTrackbars() {
     //*//
     cv::createTrackbar("Template", "Templates", &template_value, 30, [](int, void*) -> void { 
         if (templates.size() ==0 ) return;
-        if(template_value > templates.size() - 1) setTrackbarPos("Template", "Templates", templates.size() - 1);
-        cv::Mat temp; bitwise_and(templates[template_value], blextr->diff_img, temp); cout <<"Blob Angle: " << angle_per_blob[template_value] << endl; imshow("Templates", temp); });
+        if (template_value > templates.size() - 1) return;
+        imshow("Templates", templates[template_value]); });
     //*/
 
     cv::namedWindow("List_of_matches", WINDOW_FREERATIO);
@@ -386,11 +389,8 @@ void createWindowsAndTrackbars() {
             if(list_of_match_results.size() == 0) return;
             if(match_result_value > list_of_match_results.size() - 1) setTrackbarPos("Match", "Control", list_of_match_results.size() - 1);
             imshow("List_of_matches", list_of_match_results[match_result_value]);
-            imshow("List_of_matches_withcrosscheck", list_of_match_results_withcrosscheck[match_result_value]); 
-            
-            cv::Mat temp; bitwise_and(templates[match_result_value], blextr->diff_img, temp);
-            cout <<"Blob Angle: " << angle_per_blob[match_result_value] << endl; 
-            imshow("Templates", temp);
+
+            imshow("Templates", templates[match_result_value]);
             template_value = match_result_value;
             });
     setTrackbarPos("Match", "Control", match_result_value);

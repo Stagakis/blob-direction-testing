@@ -116,46 +116,7 @@
 		<Unit filename="/home/stagakis/Desktop/blob-direction/src/BlobMatcher.cpp">
 			<Option target="Blob_direction"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Converter.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Frame.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Initializer.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/KeyFrame.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/KeyFrameDatabase.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/LocalMapping.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/LoopClosing.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Map.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/MapPoint.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob-direction/src/ORBextractor.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/ORBmatcher.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Optimizer.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/PnPsolver.cc">
-			<Option target="Blob_direction"/>
-		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob-direction/src/Sim3Solver.cc">
 			<Option target="Blob_direction"/>
 		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob-direction/src/ThreeFrameProcesser.cpp">
@@ -177,6 +138,9 @@
 			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob-direction/../../../../usr/local/share/OpenCV/OpenCVModules-debug.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
+		</Unit>
+		<Unit filename="/home/stagakis/Desktop/blob-direction/../../../../usr/local/share/OpenCV/OpenCVModules-release.cmake">
 			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob-direction/../../../../usr/local/share/OpenCV/OpenCVModules.cmake">

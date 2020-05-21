@@ -1,0 +1,38 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../include/helpers.h
+stdio.h
+-
+vector
+-
+iostream
+-
+algorithm
+-
+math.h
+-
+opencv2/core/core.hpp
+-
+
+/home/stagakis/Desktop/blob-direction/src/helpers.cpp
+iostream
+-
+helpers.h
+-
+opencv2/imgproc/imgproc.hpp
+-
+opencv2/video.hpp
+-
+opencv2/highgui.hpp
+-
+opencv2/features2d.hpp
+-
+opencv2/features2d.hpp
+-
+

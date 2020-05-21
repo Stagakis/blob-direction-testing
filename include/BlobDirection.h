@@ -43,8 +43,8 @@ BlobExtractor* blextr;
 ThreeFrameProcesser* tfp;
 
 std::vector<cv::Mat> images;
-int frame_slider = 31; // 223;
-int threshold_slider = 65;// 52; //40;
+int frame_slider = 387; // 223;
+int threshold_slider = 40;// 52; //40;
 int dilation_slider = 1; //40;
 int recursion_depth = 0;
 int template_value = 0;

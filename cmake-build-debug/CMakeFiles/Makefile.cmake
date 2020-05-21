@@ -108,6 +108,7 @@ set(CMAKE_MAKEFILE_DEPENDS
   "/usr/local/share/OpenCV/OpenCVConfig-version.cmake"
   "/usr/local/share/OpenCV/OpenCVConfig.cmake"
   "/usr/local/share/OpenCV/OpenCVModules-debug.cmake"
+  "/usr/local/share/OpenCV/OpenCVModules-release.cmake"
   "/usr/local/share/OpenCV/OpenCVModules.cmake"
   "/usr/local/share/eigen3/cmake/Eigen3Config.cmake"
   "/usr/local/share/eigen3/cmake/Eigen3ConfigVersion.cmake"

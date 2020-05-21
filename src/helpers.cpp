@@ -11,6 +11,7 @@ using namespace cv;
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 #define CHECK_IMAGE(mat_name, wait) cv::namedWindow(GET_VARIABLE_NAME(mat_name), cv::WINDOW_KEEPRATIO); cv::imshow(GET_VARIABLE_NAME(mat_name), mat_name); if(wait) cv::waitKey(0);
 
+
 void my_matching_method(Mat& queryDescriptors, Mat& trainDescriptors, std::vector<DMatch>& matches, InputArray mask){
     matches.clear();
     int best_distance;
@@ -64,7 +65,8 @@ void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img){
     add(temp, hsv_img, hsv_img);
 }
 
-Vec2f calculate_direction_com(cv::Mat& image) {
+
+float calculate_angle(cv::Mat& image) {
     cv::Vec2i start_point(0, 0);
     cv::Vec2i end_point(0, 0);
     int before_points = 0;
@@ -78,13 +80,51 @@ Vec2f calculate_direction_com(cv::Mat& image) {
                 before_points++;
             }
 
-            if (image.at<uchar>(i, j) == 190) {
+            else if (image.at<uchar>(i, j) == 190) {
                 end_point.val[0] += i;
                 end_point.val[1] += j;
                 after_points++;
             }
 
-            if (image.at<uchar>(i, j) == 255) {
+            else if (image.at<uchar>(i, j) == 255) {
+                start_point.val[0] += i;
+                start_point.val[1] += j;
+                end_point.val[0] += i;
+                end_point.val[1] += j;
+            }
+        }
+    }
+
+    end_point /= after_points;
+    start_point /= before_points;
+    auto dir = end_point - start_point;
+    float angle = atan2(-dir.val[1], dir.val[0]);
+    if(angle<0) angle += 360;
+    return angle;
+}
+
+
+Vec2f calculate_direction_com(const cv::Mat& image) {
+    cv::Vec2i start_point(0, 0);
+    cv::Vec2i end_point(0, 0);
+    int before_points = 0;
+    int after_points = 0;
+
+    for (int i = 0; i < image.rows; i++) {
+        for (int j = 0; j < image.cols; j++) {
+            if (image.at<uchar>(i, j) == 105) {
+                start_point.val[0] += i;
+                start_point.val[1] += j;
+                before_points++;
+            }
+
+            else if (image.at<uchar>(i, j) == 190) {
+                end_point.val[0] += i;
+                end_point.val[1] += j;
+                after_points++;
+            }
+
+            else if (image.at<uchar>(i, j) == 255) {
                 start_point.val[0] += i;
                 start_point.val[1] += j;
                 end_point.val[0] += i;
@@ -100,7 +140,6 @@ Vec2f calculate_direction_com(cv::Mat& image) {
     float length = sqrt(direction.dot(direction));
 
     return direction / length;
-
 }
 
 
@@ -205,9 +244,35 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 
 }
 
-void filter_keypoints_and_descriptors(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img, int scale_factor){
+void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
+                              cv::Mat& mask_img, cv::Rect& bb){
+
+    int range = 2;
+    for(int k = 0; k< all_kp.size(); ++k){
+        int pt_x = (int)all_kp.operator[](k).pt.x;
+        int pt_y = (int)all_kp.operator[](k).pt.y;
+
+        for(int i = -range, found = false; i < range+1 && !found; i++){
+            for(int j = -range; j < range+1 && !found; j++){
+                int row = pt_y-j;
+                int col = pt_x-i;
+                const uchar* data = mask_img.ptr(row);
+                bool belongs = data[col] == color || data[col] == 255;
+                if(belongs){
+                    out_kp_indeces.push_back(k);
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        //*/
+    }
+}
+
+void filter_keypoints_and_descriptors(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img){
     for(int i = 0; i< all_kp.size(); i++){
-        Point2d test_point = all_kp[i].pt/scale_factor;
+        Point2d test_point = all_kp[i].pt;
         if(mask_img.at<uchar>(test_point) == color || mask_img.at<uchar>(test_point) == 255){
             out_kp.push_back(all_kp[i]);
             out_des.push_back(all_des.row(i));
@@ -247,7 +312,7 @@ void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<Ke
     mask_mat = mask_mat.t();
 }
 
-int calculate_angle_by_com(cv::Mat& blob_image_bb){
+int calculate_angle_by_com(const cv::Mat& blob_image_bb){
 
     Vec2f dir = calculate_direction_com(blob_image_bb);
     int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
