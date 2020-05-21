@@ -84,15 +84,14 @@ static void threshold_trackbar (int , void* )
 
     threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY);
     threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY);
-    LOG("PETROS");
+
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b1;
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b2;
-    LOG("PETROS2");
+
 
     cv2eigen(cur, b1);
     cv2eigen(prev, b2);
     b1 += b2;
-    LOG("PETROS3");
     eigen2cv(b1, diff_img);
 
 
@@ -131,6 +130,8 @@ static void threshold_trackbar (int , void* )
         cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
 
         start = high_resolution_clock::now();
+        cout << "Blob " << calculate_angle_by_com(blob) << endl;
+        //CHECK_IMAGE(blob, true);
         angle_per_blob.push_back(calculate_angle_by_com(blob(blob_bb)));
         time_angle_calculation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_angle_calculation_total = time_angle_calculation;
@@ -156,7 +157,6 @@ static void threshold_trackbar (int , void* )
                 matches.emplace_back(i, bestIdx2, bestDist);
             }
         }
-
 
         drawMatches(previous, kp_prev, current, kp_cur, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         list_of_match_results.push_back(match_results.clone());

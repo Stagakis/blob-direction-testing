@@ -59,7 +59,9 @@ void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img){
 
     Mat temp(Size(hsv_img.cols, hsv_img.rows), CV_8UC3, cv::Scalar(angle/2, 255, 255));
     Mat template_img_3d;
-    cv::cvtColor(mask_img, template_img_3d, cv::COLOR_GRAY2RGB);
+    Mat mask_img_thresholded;
+    threshold(mask_img, mask_img_thresholded, 1, 255, CV_THRESH_BINARY);
+    cv::cvtColor(mask_img_thresholded, template_img_3d, cv::COLOR_GRAY2RGB);
 
     bitwise_and(template_img_3d, temp, temp);
     add(temp, hsv_img, hsv_img);
@@ -112,13 +114,13 @@ Vec2f calculate_direction_com(const cv::Mat& image) {
 
     for (int i = 0; i < image.rows; i++) {
         for (int j = 0; j < image.cols; j++) {
-            if (image.at<uchar>(i, j) == 105) {
+            if (image.at<uchar>(i, j) == 95) {
                 start_point.val[0] += i;
                 start_point.val[1] += j;
                 before_points++;
             }
 
-            else if (image.at<uchar>(i, j) == 190) {
+            else if (image.at<uchar>(i, j) == 160) {
                 end_point.val[0] += i;
                 end_point.val[1] += j;
                 after_points++;
@@ -247,7 +249,7 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
                               cv::Mat& mask_img, cv::Rect& bb){
 
-    int range = 2;
+    int range = 4;
     for(int k = 0; k< all_kp.size(); ++k){
         int pt_x = (int)all_kp.operator[](k).pt.x;
         int pt_y = (int)all_kp.operator[](k).pt.y;
