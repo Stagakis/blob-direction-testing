@@ -249,7 +249,7 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
                               cv::Mat& mask_img, cv::Rect& bb){
 
-    int range = 4;
+    int range = 1;
     for(int k = 0; k< all_kp.size(); ++k){
         int pt_x = (int)all_kp.operator[](k).pt.x;
         int pt_y = (int)all_kp.operator[](k).pt.y;

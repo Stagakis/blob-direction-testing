@@ -79,12 +79,25 @@ static void threshold_trackbar (int , void* )
     cvtColor(current, current_gray,CV_RGB2GRAY);
     cvtColor(previous, prev_gray,CV_RGB2GRAY);
     cvtColor(pre_previous, preprev_gray,CV_RGB2GRAY);
-    subtract(current_gray, prev_gray, diff_cur_prev, noArray(), CV_16S);
-    subtract(prev_gray, preprev_gray, diff_prev_preprev, noArray(), CV_16S);
+    subtract(current_gray, prev_gray, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
+    subtract(prev_gray, preprev_gray, diff_prev_preprev, noArray(), CV_8U);
 
-    threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY);
-    threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY);
-
+    if(use_basic_thresholding) {
+        start = high_resolution_clock::now();
+        threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY);
+        threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY);
+        cout << "Default Thresholding: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count()
+             << endl;
+    }
+    else {
+        start = high_resolution_clock::now();
+        cv::adaptiveThreshold(diff_cur_prev, cur, THRESHOLD_VALUE_CUR, ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY,
+                              1 + 2 * adapt_neighboorhood, -adapt_constant);
+        cv::adaptiveThreshold(diff_prev_preprev, prev, THRESHOLD_VALUE_PREV, ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY,
+                              1 + 2 * adapt_neighboorhood, -adapt_constant);
+        cout << "AdaptiveThresholding: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count()
+             << endl;
+    }
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b1;
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b2;
 
@@ -137,11 +150,12 @@ static void threshold_trackbar (int , void* )
         time_angle_calculation_total = time_angle_calculation;
         cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
 
-        int bestDist = 256;
-        int bestIdx2 = -1;
+
         update_hsv_image(hsv_image, angle_per_blob.back(), blob);
         for(size_t i : kp_prev_blob)
         {
+            int bestDist = 256;
+            int bestIdx2 = -1;
             cv::Mat desc1 = des_prev.row(i);
             for(size_t i2 : kp_cur_blob)
             {
@@ -153,7 +167,7 @@ static void threshold_trackbar (int , void* )
                     bestIdx2=i2;
                 }
             }
-            if(bestDist<=100) {
+            if(bestDist<=50) {
                 matches.emplace_back(i, bestIdx2, bestDist);
             }
         }
@@ -396,7 +410,10 @@ void createWindowsAndTrackbars() {
     setTrackbarPos("Match", "Control", match_result_value);
 
     cv::createTrackbar("Frame", "Control", &frame_slider, images.size() - 1, frame_trackbar);
+    cv::createTrackbar("Adapt_Neigh(2*N+1)", "Control", &adapt_neighboorhood, 50, frame_trackbar);
+    cv::createTrackbar("-Adapt_Const", "Control", &adapt_constant, 20, frame_trackbar);
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);
+    cv::createTrackbar("BasicTheshold(0/1)", "Control", &use_basic_thresholding, 1, threshold_trackbar);
     cv::createTrackbar("Dilation(2*X+1)", "Control", &dilation_slider, 3, [](int, void*) -> void {threshold_trackbar(0,0); });
     cv::createTrackbar("Angle_tolerance(2*X)", "Control", &blob_angle_tolerance, 15, [](int, void*) -> void {threshold_trackbar(0,0); });
 

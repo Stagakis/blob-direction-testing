@@ -45,6 +45,10 @@ ThreeFrameProcesser* tfp;
 std::vector<cv::Mat> images;
 int frame_slider = 387; // 223;
 int threshold_slider = 40;// 52; //40;
+int adapt_neighboorhood = 10;// 52; //40;
+int adapt_constant = 4;// 52; //40;
+int use_basic_thresholding = 0;
+
 int dilation_slider = 1; //40;
 int recursion_depth = 0;
 int template_value = 0;
