@@ -79,8 +79,15 @@ static void threshold_trackbar (int , void* )
     cvtColor(current, current_gray,CV_RGB2GRAY);
     cvtColor(previous, prev_gray,CV_RGB2GRAY);
     cvtColor(pre_previous, preprev_gray,CV_RGB2GRAY);
-    subtract(current_gray, prev_gray, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
-    subtract(prev_gray, preprev_gray, diff_prev_preprev, noArray(), CV_8U);
+
+    cv::Mat current_gray_reduced, prev_grey_reduced, pre_previous_gray_reduced;
+    cv::resize(current_gray, current_gray_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
+    cv::resize(prev_gray, prev_grey_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
+    cv::resize(preprev_gray, pre_previous_gray_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
+
+    subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
+    subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
+
 
     if(use_basic_thresholding) {
         start = high_resolution_clock::now();
@@ -124,8 +131,9 @@ static void threshold_trackbar (int , void* )
 
     templates.clear();
     list_of_match_results.clear();
+    int total_matches = 0;
     while(blextr->GetNextBlob(blob, blob_bb)){
-        LOG("==K is " << blextr->num_of_blobs);
+        LOG("==K is " << blextr->num_of_blobs - 1);
 
         templates.push_back(blob);
 
@@ -143,13 +151,13 @@ static void threshold_trackbar (int , void* )
         cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
 
         start = high_resolution_clock::now();
-        cout << "Blob " << calculate_angle_by_com(blob) << endl;
+        cout << "Blob Angle" << calculate_angle_by_com(blob) << endl;
         //CHECK_IMAGE(blob, true);
         angle_per_blob.push_back(calculate_angle_by_com(blob(blob_bb)));
         time_angle_calculation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_angle_calculation_total = time_angle_calculation;
         cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
-
+        cout << "PrevKeypoints: " << kp_prev_blob.size() << " AfterKeypoints " << kp_cur_blob.size() << endl;
 
         update_hsv_image(hsv_image, angle_per_blob.back(), blob);
         for(size_t i : kp_prev_blob)
@@ -169,14 +177,16 @@ static void threshold_trackbar (int , void* )
             }
             if(bestDist<=50) {
                 matches.emplace_back(i, bestIdx2, bestDist);
+                total_matches++;
             }
         }
 
         drawMatches(previous, kp_prev, current, kp_cur, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
         list_of_match_results.push_back(match_results.clone());
+        cout << "Final match number of Blob: " << matches.size() << endl;
     }
 
-    auto base_processing_time = time_blob_extraction + time_three_frame_differencing + time_dilation_total + time_keypoint_filtering_total;
+    /*auto base_processing_time = time_blob_extraction + time_three_frame_differencing + time_dilation_total + time_keypoint_filtering_total;
     auto processing_time_mask_blobangles = base_processing_time + time_angle_calculation_total + time_matching_with_mask_total;
     auto processing_time_nomask_crosscheck = base_processing_time + time_matching_without_mask;
     LOG("=================BASE TIMINGS===============================")
@@ -194,12 +204,13 @@ static void threshold_trackbar (int , void* )
     LOG("Total processing time by not using mask but crosscheck :    " << processing_time_nomask_crosscheck);
     LOG("Num of matches found                               :        " << crosscheck_num_of_matches);
     LOG("Mean processing time per match:                             " << processing_time_nomask_crosscheck/((float)crosscheck_num_of_matches));
-    LOG("============================================================")
+    LOG("=================BRUTE FORCE================================")
     LOG("ORB brute force on whole image :                            " << time_orb_brute_force_whole_image);
     LOG("Num of matches found                               :        " << brute_force_whole_img_num_of_matches);
     LOG("ORB brute force mean time per match :                       " << time_orb_brute_force_whole_image/((float)brute_force_whole_img_num_of_matches));
+*/
     std::cout << "Blob Number: " << templates.size() << endl;
-    std::cout << "List of match results: " << list_of_match_results.size() << endl;
+    std::cout << "Number of match results: " << total_matches << endl;
 
     //---------------WINDOW SHOWING ------------------------------//
     LOG("Window Showing")
@@ -345,8 +356,8 @@ int main(int argc, char** argv )
     for(int i = 0; i < fn.size(); i++){
         Mat img_frame = imread(fn[i]);
         //cv::resize(img_frame, img_frame, cv::Size(), 1.0/scale_factor, 1.0/scale_factor, CV_INTER_NN);
-
-        cv::resize(img_frame, img_frame, cv::Size(img_frame.cols * 0.5, img_frame.rows * 0.5), 0, 0, CV_INTER_CUBIC);
+        //cv::Mat img_frame_reduced;
+        //cv::resize(img_frame, img_frame_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
         images.push_back(img_frame.clone()); 
     }
     LOG("Creating Windows");
@@ -402,6 +413,12 @@ void createWindowsAndTrackbars() {
         [](int, void*) -> void { 
             if(list_of_match_results.size() == 0) return;
             if(match_result_value > list_of_match_results.size() - 1) setTrackbarPos("Match", "Control", list_of_match_results.size() - 1);
+
+/*            cv::Mat matArray[] = {list_of_match_results[match_result_value],
+                                  list_of_match_results[match_result_value]};
+            cv::Mat concat;
+
+            cv::hconcat(matArray, 2, concat);*/
             imshow("List_of_matches", list_of_match_results[match_result_value]);
 
             imshow("Templates", templates[match_result_value]);
