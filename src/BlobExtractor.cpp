@@ -72,18 +72,13 @@ bool BlobExtractor::GetNextBlob(cv::Mat& out_blob_img, cv::Rect& out_bb) {
 
         recursion_func2(pixel, diff_img, 255, binary_mask_image, before_points, after_points, top_left, bottom_right);
 
+        /*
         if (!(   before_points + after_points < PIXEL_THRESHOLD / (4)
               || before_points < 0.3 * after_points || after_points < 0.3 * before_points
               || before_points == 0 || after_points == 0)) {
-
+        */
+        if(true){
             out_bb = cv::Rect(top_left, bottom_right);
-
-            /*
-            if(out_bb.width > 15)
-                cv::imwrite("../../debug_folder/_Blob_width" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
-            else if( out_bb.height > 15)
-                cv::imwrite("../../debug_folder/_Blob_height" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
-            */
 
             out_blob_img = binary_mask_image;
             start = i;
@@ -268,11 +263,11 @@ void BlobExtractor::recursion_func2(cv::Point pixel, cv::Mat& img, uchar blob_nu
 
 
     recursion_func2(cv::Point(pixel.x + 0, pixel.y + 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
-    //recursion_func2(cv::Point(pixel.x + 1, pixel.y + 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
-    //recursion_func2(cv::Point(pixel.x - 1, pixel.y + 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
+    recursion_func2(cv::Point(pixel.x + 1, pixel.y + 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
+    recursion_func2(cv::Point(pixel.x - 1, pixel.y + 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
     recursion_func2(cv::Point(pixel.x + 0, pixel.y - 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
-    //recursion_func2(cv::Point(pixel.x + 1, pixel.y - 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
-    //recursion_func2(cv::Point(pixel.x - 1, pixel.y - 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
+    recursion_func2(cv::Point(pixel.x + 1, pixel.y - 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
+    recursion_func2(cv::Point(pixel.x - 1, pixel.y - 1), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
     recursion_func2(cv::Point(pixel.x + 1, pixel.y + 0), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
     recursion_func2(cv::Point(pixel.x - 1, pixel.y + 0), img, blob_number, template_img, before_points, after_points,top_left, bottom_right, current_color);
 
