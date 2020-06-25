@@ -80,9 +80,9 @@ bool BlobExtractor::GetNextBlob(cv::Mat& out_blob_img, cv::Rect& out_bb) {
 
             /*
             if(out_bb.width > 15)
-                cv::imwrite("/home/stagakis/ORB_SLAM2/debug_folder/_Blob_width" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
+                cv::imwrite("../../debug_folder/_Blob_width" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
             else if( out_bb.height > 15)
-                cv::imwrite("/home/stagakis/ORB_SLAM2/debug_folder/_Blob_height" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
+                cv::imwrite("../../debug_folder/_Blob_height" + std::to_string(time(0)) + "_" + std::to_string(num_of_blobs) +".png",binary_mask_image);
             */
 
             out_blob_img = binary_mask_image;
@@ -322,6 +322,9 @@ void BlobExtractor::recursion_func(cv::Point pixel, cv::Mat& img, uchar blob_num
     recursion_func(cv::Point(pixel.x - 1, pixel.y + 0), img, blob_number, template_img, before_points, after_points, current_color);
 
 }
+
+
+
 
 void BlobExtractor::GetBlobFullSize(int index, cv::Mat& outImage){
     outImage = blob_img_full[index];

@@ -47,6 +47,9 @@ public:
     // Used to track the local map (Tracking)
     int SearchByProjection(Frame &F, const std::vector<MapPoint*> &vpMapPoints, const float th=3);
 
+    int SearchByThreeFrameProcessing(Frame &CurrentFrame, const Frame &LastFrame, bool positiveChange = true);
+    static int SearchByThreeFrameProcessing_test(Frame *CurrentFrame2, Frame *LastFrame2, bool positiveChange = true);
+
     // Project MapPoints tracked in last frame into the current frame and search matches.
     // Used to track from previous frame (Tracking)
     int SearchByProjection(Frame &CurrentFrame, const Frame &LastFrame, const float th, const bool bMono);
@@ -57,7 +60,7 @@ public:
 
     // Project MapPoints using a Similarity Transformation and search matches.
     // Used in loop detection (Loop Closing)
-    int SearchByProjection(KeyFrame* pKF, cv::Mat Scw, const std::vector<MapPoint*> &vpPoints, std::vector<MapPoint*> &vpMatched, int th);
+     int SearchByProjection(KeyFrame* pKF, cv::Mat Scw, const std::vector<MapPoint*> &vpPoints, std::vector<MapPoint*> &vpMatched, int th);
 
     // Search matches between MapPoints in a KeyFrame and ORB in a Frame.
     // Brute force constrained to ORB that belong to the same vocabulary node (at a certain level)
@@ -83,6 +86,7 @@ public:
     int Fuse(KeyFrame* pKF, cv::Mat Scw, const std::vector<MapPoint*> &vpPoints, float th, vector<MapPoint *> &vpReplacePoint);
 
 public:
+    static std::vector<cv::DMatch> matches;
 
     static const int TH_LOW;
     static const int TH_HIGH;
@@ -102,5 +106,7 @@ protected:
 };
 
 }// namespace ORB_SLAM
+
+
 
 #endif // ORBMATCHER_H

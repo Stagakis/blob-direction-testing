@@ -1,4 +1,4 @@
-/home/stagakis/Downloads/CLION/clion-2020.1.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/stagakis/Desktop/blob-direction
+/home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/stagakis/Desktop/blob_direction_testing
 -- The C compiler identification is GNU 7.5.0
 -- The CXX compiler identification is GNU 7.5.0
 -- Check for working C compiler: /usr/bin/cc
@@ -13,17 +13,17 @@
 -- Detecting CXX compiler ABI info - done
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Found OpenCV: /usr/local (found version "3.4.10") 
+-- Found OpenCV: /usr/local (found version "4.1.2") 
 Opencv include dirs variable: 
-/usr/local/include;/usr/local/include/opencv
+/usr/local/include/opencv4
 Opencv cmake dir path: 
-/usr/local/share/OpenCV
+/usr/local/lib/cmake/opencv4
 Opencv include dirs variable: 
-/usr/local/include;/usr/local/include/opencv
+/usr/local/include/opencv4
 Opencv libs variable: 
-opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_shape;opencv_stitching;opencv_superres;opencv_video;opencv_videoio;opencv_videostab
+opencv_calib3d;opencv_core;opencv_dnn;opencv_features2d;opencv_flann;opencv_gapi;opencv_highgui;opencv_imgcodecs;opencv_imgproc;opencv_ml;opencv_objdetect;opencv_photo;opencv_stitching;opencv_video;opencv_videoio
 Cmake prefix path: 
-/usr/local;/usr;/;/home/stagakis/Downloads/CLION/clion-2020.1.1/bin/cmake/linux;/usr/local;/usr/X11R6;/usr/pkg;/opt
+/usr/local;/usr;/;/home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux;/usr/local;/usr/X11R6;/usr/pkg;/opt
 -- Configuring done
 -- Generating done
--- Build files have been written to: /home/stagakis/Desktop/blob-direction/cmake-build-debug
+-- Build files have been written to: /home/stagakis/Desktop/blob_direction_testing/cmake-build-debug

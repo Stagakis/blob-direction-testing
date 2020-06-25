@@ -8,8 +8,48 @@
 using namespace std;
 using namespace cv;
 
+int frame_counter = 0;
+
 #define GET_VARIABLE_NAME(Variable) (#Variable)
 #define CHECK_IMAGE(mat_name, wait) cv::namedWindow(GET_VARIABLE_NAME(mat_name), cv::WINDOW_KEEPRATIO); cv::imshow(GET_VARIABLE_NAME(mat_name), mat_name); if(wait) cv::waitKey(0);
+
+
+void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
+                              cv::Mat& mask_img, cv::Rect& bb){
+
+    cv::Rect bb_orig = cv::Rect(bb.x*4, bb.y*4, bb.width*4, bb.height*4);
+    int range = 1;
+    for(int k = 0; k< all_kp.size(); ++k){
+        if(!bb_orig.contains(all_kp.operator[](k).pt)) {            continue;        }
+
+        //int pt_x = (int)all_kp.operator[](k).pt.x/4;
+        //int pt_y = (int)all_kp.operator[](k).pt.y/4; //TODO check is there is a speed difference
+        int pt_x = static_cast<int>(all_kp.operator[](k).pt.x)/4;
+        int pt_y = static_cast<int>(all_kp.operator[](k).pt.y)/4;
+
+        //TIME_ACCUM(point2i_creation, Point2i test_point = all_kp->operator[](k).pt;);
+
+        //if(!bb.contains(Point2i(pt_x,pt_y)/4)) {            continue;        }
+        //*//
+
+
+        for(int i = -range, found = false; i < range+1 && !found; i++){
+            for(int j = -range; j < range+1 && !found; j++){
+                int row = pt_y-j;
+                int col = pt_x-i;
+                const uchar* data = mask_img.ptr(row);
+                bool belongs = data[col] == color || data[col] == 255;
+                if(belongs){
+                    out_kp_indeces.push_back(k);
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        //*/
+    }
+}
 
 
 void my_matching_method(Mat& queryDescriptors, Mat& trainDescriptors, std::vector<DMatch>& matches, InputArray mask){
@@ -57,11 +97,11 @@ int pixel_threshold = 30;
 
 void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img){
 
+    cv::Mat mask_image_white;
+    threshold(mask_img, mask_image_white, 1, 255, cv::THRESH_BINARY);
     Mat temp(Size(hsv_img.cols, hsv_img.rows), CV_8UC3, cv::Scalar(angle/2, 255, 255));
     Mat template_img_3d;
-    Mat mask_img_thresholded;
-    threshold(mask_img, mask_img_thresholded, 1, 255, CV_THRESH_BINARY);
-    cv::cvtColor(mask_img_thresholded, template_img_3d, cv::COLOR_GRAY2RGB);
+    cv::cvtColor(mask_image_white, template_img_3d, cv::COLOR_GRAY2RGB);
 
     bitwise_and(template_img_3d, temp, temp);
     add(temp, hsv_img, hsv_img);
@@ -246,32 +286,6 @@ void recursion_func(Point pixel, Mat& img, uchar blob_number, Mat& template_img,
 
 }
 
-void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
-                              cv::Mat& mask_img, cv::Rect& bb){
-
-    int range = 3;
-    for(int k = 0; k< all_kp.size(); ++k){
-        int pt_x = (int)all_kp.operator[](k).pt.x/4;
-        int pt_y = (int)all_kp.operator[](k).pt.y/4;
-
-        for(int i = -range, found = false; i < range+1 && !found; i++){
-            for(int j = -range; j < range+1 && !found; j++){
-                int row = pt_y-j;
-                int col = pt_x-i;
-                const uchar* data = mask_img.ptr(row);
-                bool belongs = data[col] == color || data[col] == 255;
-                if(belongs){
-                    out_kp_indeces.push_back(k);
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        //*/
-    }
-}
-
 void filter_keypoints_and_descriptors(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img){
     for(int i = 0; i< all_kp.size(); i++){
         Point2d test_point = all_kp[i].pt;
@@ -315,11 +329,9 @@ void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<Ke
 }
 
 int calculate_angle_by_com(const cv::Mat& blob_image_bb){
-
     Vec2f dir = calculate_direction_com(blob_image_bb);
     int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
     if (angle < 0) angle += 360;
-    //cout << "Blob angle is: " << angle << endl;
     return angle;
 }
 

@@ -88,11 +88,37 @@ static void threshold_trackbar (int , void* )
     subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
     subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
 
-
+    cout << "Image size: W/H " << diff_cur_prev.size().width << " " << diff_cur_prev.size().height << endl;
+    cur = cv::Mat::zeros(diff_cur_prev.size(), diff_cur_prev.type());
+    prev = cv::Mat::zeros(diff_prev_preprev.size(), diff_prev_preprev.type());
     if(use_basic_thresholding) {
         start = high_resolution_clock::now();
-        threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY);
-        threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY);
+
+        //threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        //threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+
+        int numberOfCells = 6;
+
+        for(int i = 0; i < numberOfCells/2 ; i++){
+            for(int j = 0; j < numberOfCells/2 ; j++){
+                Rect roi = Rect(i*diff_cur_prev.size().width/(numberOfCells/2),j*diff_cur_prev.size().height/(numberOfCells/2),diff_cur_prev.size().width/(numberOfCells/2),diff_cur_prev.size().height/(numberOfCells/2));
+
+                threshold(diff_cur_prev(roi), cur(roi), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+                threshold(diff_prev_preprev(roi), prev(roi), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+            }
+        }
+
+        /*
+        threshold(diff_cur_prev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_cur_prev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_cur_prev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_cur_prev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
+
+        threshold(diff_prev_preprev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_prev_preprev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_prev_preprev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_prev_preprev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        */
         cout << "Default Thresholding: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count()
              << endl;
     }
@@ -209,7 +235,9 @@ static void threshold_trackbar (int , void* )
     LOG("Num of matches found                               :        " << brute_force_whole_img_num_of_matches);
     LOG("ORB brute force mean time per match :                       " << time_orb_brute_force_whole_image/((float)brute_force_whole_img_num_of_matches));
 */
+
     std::cout << "Blob Number: " << templates.size() << endl;
+    std::cout << "Number of blob match results: " << list_of_match_results.size() << endl;
     std::cout << "Number of match results: " << total_matches << endl;
 
     //---------------WINDOW SHOWING ------------------------------//
@@ -350,7 +378,7 @@ int main(int argc, char** argv )
     int scale_factor = 4;
 
     //glob("C:\\Users\\Stagakis\\Desktop\\rgbd_dataset_freiburg1_xyz\\rgb_short", fn, false);
-    glob("../rgb_mine/*png", fn, false);
+    glob("../../my_dataset/rgb/*png", fn, false);
     images.reserve(fn.size());
     LOG("Loading images");
     for(int i = 0; i < fn.size(); i++){
@@ -412,7 +440,11 @@ void createWindowsAndTrackbars() {
     cv::createTrackbar("Match", "Control", &match_result_value, 30, 
         [](int, void*) -> void { 
             if(list_of_match_results.size() == 0) return;
-            if(match_result_value > list_of_match_results.size() - 1) setTrackbarPos("Match", "Control", list_of_match_results.size() - 1);
+            if(match_result_value > list_of_match_results.size() - 1)
+            {
+                setTrackbarPos("Match", "Control", list_of_match_results.size() - 1);
+                return;
+            }
 
 /*            cv::Mat matArray[] = {list_of_match_results[match_result_value],
                                   list_of_match_results[match_result_value]};
