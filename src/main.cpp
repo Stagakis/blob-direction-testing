@@ -85,19 +85,26 @@ static void threshold_trackbar (int , void* )
     cv::resize(prev_gray, prev_grey_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
     cv::resize(preprev_gray, pre_previous_gray_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
 
-    subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
-    subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
+    //subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
+    //subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
+
+    absdiff(current_gray_reduced, prev_grey_reduced, diff_cur_prev); //TODO change back to CV_16S
+    absdiff(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev);
 
     cout << "Image size: W/H " << diff_cur_prev.size().width << " " << diff_cur_prev.size().height << endl;
     cur = cv::Mat::zeros(diff_cur_prev.size(), diff_cur_prev.type());
     prev = cv::Mat::zeros(diff_prev_preprev.size(), diff_prev_preprev.type());
+
+    CHECK_IMAGE(diff_cur_prev, false);
+    CHECK_IMAGE(diff_prev_preprev, false);
+
     if(use_basic_thresholding) {
         start = high_resolution_clock::now();
 
         //threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
         //threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
 
-        int numberOfCells = 6;
+        int numberOfCells = 4;
 
         for(int i = 0; i < numberOfCells/2 ; i++){
             for(int j = 0; j < numberOfCells/2 ; j++){
@@ -108,17 +115,6 @@ static void threshold_trackbar (int , void* )
             }
         }
 
-        /*
-        threshold(diff_cur_prev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_cur_prev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_cur_prev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_cur_prev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), cur(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
-
-        threshold(diff_prev_preprev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(0,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_prev_preprev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(diff_cur_prev.size().width/2,diff_cur_prev.size().height/2, diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_prev_preprev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(0,diff_cur_prev.size().height/2,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        threshold(diff_prev_preprev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), prev(Rect(diff_cur_prev.size().width/2,0,diff_cur_prev.size().width/2,diff_cur_prev.size().height/2)), threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        */
         cout << "Default Thresholding: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count()
              << endl;
     }
@@ -177,8 +173,8 @@ static void threshold_trackbar (int , void* )
         cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
 
         start = high_resolution_clock::now();
-        cout << "Blob Angle" << calculate_angle_by_com(blob) << endl;
-        //CHECK_IMAGE(blob, true);
+        cout << "Blob Angle " << calculate_angle_by_com(blob(blob_bb)) << endl;
+
         angle_per_blob.push_back(calculate_angle_by_com(blob(blob_bb)));
         time_angle_calculation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_angle_calculation_total = time_angle_calculation;
@@ -194,6 +190,11 @@ static void threshold_trackbar (int , void* )
             for(size_t i2 : kp_cur_blob)
             {
                 cv::Mat desc2 = des_cur.row(i2);
+
+                auto start_kp = kp_cur.at(i2);
+                auto end_kp = kp_prev.at(i);
+
+
                 const int dist = DescriptorDistance(desc1,desc2);
                 if(dist<bestDist)
                 {
@@ -201,7 +202,7 @@ static void threshold_trackbar (int , void* )
                     bestIdx2=i2;
                 }
             }
-            if(bestDist<=50) {
+            if(bestDist<=best_dist_threshold) {
                 matches.emplace_back(i, bestIdx2, bestDist);
                 total_matches++;
             }
@@ -464,6 +465,7 @@ void createWindowsAndTrackbars() {
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);
     cv::createTrackbar("BasicTheshold(0/1)", "Control", &use_basic_thresholding, 1, threshold_trackbar);
     cv::createTrackbar("Dilation(2*X+1)", "Control", &dilation_slider, 3, [](int, void*) -> void {threshold_trackbar(0,0); });
+    cv::createTrackbar("BestDistThresh", "Control", &best_dist_threshold, 150, [](int, void*) -> void {threshold_trackbar(0,0); });
     cv::createTrackbar("Angle_tolerance(2*X)", "Control", &blob_angle_tolerance, 15, [](int, void*) -> void {threshold_trackbar(0,0); });
 
 }

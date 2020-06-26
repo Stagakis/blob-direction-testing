@@ -330,6 +330,7 @@ void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<Ke
 
 int calculate_angle_by_com(const cv::Mat& blob_image_bb){
     Vec2f dir = calculate_direction_com(blob_image_bb);
+    cout << " DirectionVector: " << dir << " ";
     int angle = floor(atan2(-dir.val[0], dir.val[1]) * 180 / 3.14159265);
     if (angle < 0) angle += 360;
     return angle;

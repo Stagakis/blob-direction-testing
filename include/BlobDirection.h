@@ -17,6 +17,7 @@
 using namespace cv;
 using namespace std;
 
+int best_dist_threshold = 100;
 
 #define LOG(x) std::cout << x << endl;
 #define PRINT_VECTOR(x) for(auto k: x) std::cout<<k<<endl;
