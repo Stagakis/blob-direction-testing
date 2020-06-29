@@ -6,5 +6,5 @@ CXX_FLAGS = -g
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/stagakis/Desktop/blob_direction_testing -I/home/stagakis/Desktop/blob_direction_testing/include -I/usr/include/eigen3 -I/home/stagakis/Desktop/blob_direction_testing/./include -I/home/stagakis/Desktop/blob_direction_testing/. -isystem /usr/local/include/opencv4 -isystem /home/stagakis/Pangolin/include -isystem /home/stagakis/Pangolin/build/src/include 
+CXX_INCLUDES = -I/home/stagakis/Desktop/blob_direction_testing -I/home/stagakis/Desktop/blob_direction_testing/include -I/home/stagakis/Desktop/blob_direction_testing/./include -I/home/stagakis/Desktop/blob_direction_testing/. -isystem /usr/local/include/opencv -isystem /usr/include/eigen3 -isystem /home/stagakis/Pangolin/include -isystem /home/stagakis/Pangolin/build/src/include 
 

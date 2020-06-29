@@ -5,7 +5,7 @@
 		<Option title="Blob_direction"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\lib\;CMake Files\..\..\..\..\usr\local\lib\cmake\;CMake Files\..\..\..\..\usr\local\lib\cmake\opencv4\;CMake Files\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\usr\lib\cmake\;CMake Files\..\..\..\..\usr\lib\cmake\eigen3\;CMake Files\..\..\Pangolin\;CMake Files\..\..\Pangolin\build\;CMake Files\..\..\Pangolin\build\src\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\usr\;CMake Files\..\..\..\..\usr\local\;CMake Files\..\..\..\..\usr\local\share\;CMake Files\..\..\..\..\usr\local\share\OpenCV\;CMake Files\..\..\..\..\usr\lib\;CMake Files\..\..\..\..\usr\lib\cmake\;CMake Files\..\..\..\..\usr\lib\cmake\eigen3\;CMake Files\..\..\Pangolin\;CMake Files\..\..\Pangolin\build\;CMake Files\..\..\Pangolin\build\src\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug"/>
@@ -46,10 +46,10 @@
 				<Compiler>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/include"/>
-					<Add directory="/usr/include/eigen3"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/./include"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/."/>
-					<Add directory="/usr/local/include/opencv4"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
 					<Add directory="/home/stagakis/Pangolin/include"/>
 					<Add directory="/home/stagakis/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
@@ -77,10 +77,10 @@
 				<Compiler>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/include"/>
-					<Add directory="/usr/include/eigen3"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/./include"/>
 					<Add directory="/home/stagakis/Desktop/blob_direction_testing/."/>
-					<Add directory="/usr/local/include/opencv4"/>
+					<Add directory="/usr/local/include/opencv"/>
+					<Add directory="/usr/include/eigen3"/>
 					<Add directory="/home/stagakis/Pangolin/include"/>
 					<Add directory="/home/stagakis/Pangolin/build/src/include"/>
 					<Add directory="/usr/include/c++/7"/>
@@ -115,9 +115,6 @@
 		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/src/BlobExtractor.cpp">
 			<Option target="Blob_direction"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/src/BlobMatcher.cpp">
-			<Option target="Blob_direction"/>
-		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/src/ORBextractor.cc">
 			<Option target="Blob_direction"/>
 		</Unit>
@@ -133,17 +130,17 @@
 		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/lib/cmake/opencv4/OpenCVConfig-version.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\opencv4\"/>
+		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/share/OpenCV/OpenCVConfig-version.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/lib/cmake/opencv4/OpenCVConfig.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\opencv4\"/>
+		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/share/OpenCV/OpenCVConfig.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/lib/cmake/opencv4/OpenCVModules-debug.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\opencv4\"/>
+		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/share/OpenCV/OpenCVModules-debug.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
-		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/lib/cmake/opencv4/OpenCVModules.cmake">
-			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\lib\cmake\opencv4\"/>
+		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/local/share/OpenCV/OpenCVModules.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\usr\local\share\OpenCV\"/>
 		</Unit>
 		<Unit filename="/home/stagakis/Desktop/blob_direction_testing/../../../../usr/lib/cmake/eigen3/Eigen3Config.cmake">
 			<Option virtualFolder="CMake Files\..\..\..\..\usr\lib\cmake\eigen3\"/>

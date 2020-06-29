@@ -39,10 +39,10 @@ cmake_force:
 SHELL = /bin/sh
 
 # The CMake executable.
-CMAKE_COMMAND = /home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux/bin/cmake
+CMAKE_COMMAND = /opt/clion-2020.1.2/bin/cmake/linux/bin/cmake
 
 # The command to remove a file.
-RM = /home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux/bin/cmake -E remove -f
+RM = /opt/clion-2020.1.2/bin/cmake/linux/bin/cmake -E remove -f
 
 # Escaping for special characters.
 EQUALS = =
@@ -59,7 +59,7 @@ CMAKE_BINARY_DIR = /home/stagakis/Desktop/blob_direction_testing/cmake-build-deb
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+	/opt/clion-2020.1.2/bin/cmake/linux/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : rebuild_cache
 
 # Special rule for the target rebuild_cache
@@ -70,7 +70,7 @@ rebuild_cache/fast: rebuild_cache
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/stagakis/Downloads/clion-2020.1.2/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	/opt/clion-2020.1.2/bin/cmake/linux/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -149,33 +149,6 @@ src/BlobExtractor.s: src/BlobExtractor.cpp.s
 src/BlobExtractor.cpp.s:
 	$(MAKE) -f CMakeFiles/Blob_direction.dir/build.make CMakeFiles/Blob_direction.dir/src/BlobExtractor.cpp.s
 .PHONY : src/BlobExtractor.cpp.s
-
-src/BlobMatcher.o: src/BlobMatcher.cpp.o
-
-.PHONY : src/BlobMatcher.o
-
-# target to build an object file
-src/BlobMatcher.cpp.o:
-	$(MAKE) -f CMakeFiles/Blob_direction.dir/build.make CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.o
-.PHONY : src/BlobMatcher.cpp.o
-
-src/BlobMatcher.i: src/BlobMatcher.cpp.i
-
-.PHONY : src/BlobMatcher.i
-
-# target to preprocess a source file
-src/BlobMatcher.cpp.i:
-	$(MAKE) -f CMakeFiles/Blob_direction.dir/build.make CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.i
-.PHONY : src/BlobMatcher.cpp.i
-
-src/BlobMatcher.s: src/BlobMatcher.cpp.s
-
-.PHONY : src/BlobMatcher.s
-
-# target to generate assembly for a file
-src/BlobMatcher.cpp.s:
-	$(MAKE) -f CMakeFiles/Blob_direction.dir/build.make CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.s
-.PHONY : src/BlobMatcher.cpp.s
 
 src/ORBextractor.o: src/ORBextractor.cc.o
 
@@ -297,9 +270,6 @@ help:
 	@echo "... src/BlobExtractor.o"
 	@echo "... src/BlobExtractor.i"
 	@echo "... src/BlobExtractor.s"
-	@echo "... src/BlobMatcher.o"
-	@echo "... src/BlobMatcher.i"
-	@echo "... src/BlobMatcher.s"
 	@echo "... src/ORBextractor.o"
 	@echo "... src/ORBextractor.i"
 	@echo "... src/ORBextractor.s"

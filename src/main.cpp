@@ -25,11 +25,14 @@ using namespace std::chrono;
 static void threshold_trackbar (int , void* )
 {
     LOG("====Threshold trackbar value" << threshold_slider)
-    cv::Mat current, previous, pre_previous;
+    cv::Mat current, previous, pre_previous, current_with_kps, previous_with_kps;
     current = images[frame_slider];
     previous = images[frame_slider - 1];
     pre_previous = images[frame_slider - 2];
 
+    cv::Mat matches_base;
+    cv::hconcat(previous, current, matches_base);
+    cv::Mat matches_mask_total = matches_base.clone(), matches_cross_total = matches_base.clone();
 
     Mat match_results_whole_image_orb;
     {
@@ -53,11 +56,22 @@ static void threshold_trackbar (int , void* )
         brute_force_whole_img_num_of_matches = matches.size();
         CHECK_IMAGE(match_results_whole_image_orb, false);
     }
+
+    cv::Mat blob;
+    cv::Rect blob_bb;
+
+    drawKeypoints(current, kp_cur, current_with_kps);
+    drawKeypoints(previous, kp_prev, previous_with_kps);
+    cv::Mat keypoints_only_image;
+    hconcat(current_with_kps, previous_with_kps, keypoints_only_image);
+    CHECK_IMAGE(keypoints_only_image, false);
+
     templates.clear();
     angle_per_blob.clear();
     list_of_match_results.clear();
     list_of_match_results_withcrosscheck.clear();
 
+    int total_matches = 0;
     time_dilation_total = 0;
     time_keypoint_filtering_total = 0;
     time_angle_calculation_total = 0;
@@ -71,11 +85,7 @@ static void threshold_trackbar (int , void* )
     
     
     auto start = high_resolution_clock::now();
-    cv::Mat current_gray, prev_gray, preprev_gray;
-    cv::Mat diff_img, cur, prev;
-    cv::Mat diff_cur_prev;
-    cv::Mat diff_prev_preprev;
-
+    cv::Mat current_gray, prev_gray, preprev_gray, diff_img, cur, prev, diff_cur_prev, diff_prev_preprev;
     cvtColor(current, current_gray,CV_RGB2GRAY);
     cvtColor(previous, prev_gray,CV_RGB2GRAY);
     cvtColor(pre_previous, preprev_gray,CV_RGB2GRAY);
@@ -85,11 +95,11 @@ static void threshold_trackbar (int , void* )
     cv::resize(prev_gray, prev_grey_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
     cv::resize(preprev_gray, pre_previous_gray_reduced, cv::Size(), 0.25f, 0.25f, CV_INTER_NN);
 
-    //subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
-    //subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
+    subtract(current_gray_reduced, prev_grey_reduced, diff_cur_prev, noArray(), CV_8U); //TODO change back to CV_16S
+    subtract(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev, noArray(), CV_8U);
 
-    absdiff(current_gray_reduced, prev_grey_reduced, diff_cur_prev); //TODO change back to CV_16S
-    absdiff(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev);
+    //absdiff(current_gray_reduced, prev_grey_reduced, diff_cur_prev); //TODO change back to CV_16S
+    //absdiff(prev_grey_reduced, pre_previous_gray_reduced, diff_prev_preprev);
 
     cout << "Image size: W/H " << diff_cur_prev.size().width << " " << diff_cur_prev.size().height << endl;
     cur = cv::Mat::zeros(diff_cur_prev.size(), diff_cur_prev.type());
@@ -101,10 +111,10 @@ static void threshold_trackbar (int , void* )
     if(use_basic_thresholding) {
         start = high_resolution_clock::now();
 
-        //threshold(diff_cur_prev, cur, threshold_slider, THRESHOLD_VALUE_CUR, CV_THRESH_BINARY + CV_THRESH_OTSU);
-        //threshold(diff_prev_preprev, prev, threshold_slider, THRESHOLD_VALUE_PREV, CV_THRESH_BINARY + CV_THRESH_OTSU);
+        threshold(diff_cur_prev, diff_cur_prev, 50, 0, CV_THRESH_TOZERO);
+        threshold(diff_prev_preprev, diff_prev_preprev, 50, 0, CV_THRESH_TOZERO);
 
-        int numberOfCells = 4;
+        int numberOfCells = 6;
 
         for(int i = 0; i < numberOfCells/2 ; i++){
             for(int j = 0; j < numberOfCells/2 ; j++){
@@ -127,36 +137,22 @@ static void threshold_trackbar (int , void* )
         cout << "AdaptiveThresholding: " << duration_cast<microseconds>(high_resolution_clock::now() - start).count()
              << endl;
     }
+
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b1;
     Eigen::Matrix<uchar, Eigen::Dynamic, Eigen::Dynamic> b2;
-
-
     cv2eigen(cur, b1);
     cv2eigen(prev, b2);
     b1 += b2;
     eigen2cv(b1, diff_img);
 
-
     LOG("TIME taken for tfp: " << time_three_frame_differencing)
 
     Mat hsv_image = Mat::zeros(Size(diff_img.cols, diff_img.rows), CV_8UC3);
 
-
     start = high_resolution_clock::now();
     blextr = new BlobExtractor(diff_img);
-    LOG("DownScaling");
-    //blextr->Downscale();
-
-    cv::Mat blob;
-    cv::Rect blob_bb;
-    LOG("Iterating over Blobs");
-
-    templates.clear();
-    list_of_match_results.clear();
-    int total_matches = 0;
     while(blextr->GetNextBlob(blob, blob_bb)){
-        LOG("==K is " << blextr->num_of_blobs - 1);
-
+        cout <<"==Blob number: " << blextr->num_of_blobs - 1 << "  ";
         templates.push_back(blob);
 
         cv::Mat match_results;
@@ -164,35 +160,51 @@ static void threshold_trackbar (int , void* )
         std::vector< DMatch > matches;
 
         start = high_resolution_clock::now();
-        filter_keypoints_indeces(kp_cur, kp_cur_blob, THRESHOLD_VALUE_CUR, blob, blob_bb);
-        filter_keypoints_indeces(kp_prev, kp_prev_blob, THRESHOLD_VALUE_PREV, blob, blob_bb);
+        filter_keypoints_indeces(kp_cur, kp_cur_blob, THRESHOLD_VALUE_CUR, blob, blob_bb,keypoint_filter_range_slider);
+        filter_keypoints_indeces(kp_prev, kp_prev_blob, THRESHOLD_VALUE_PREV, blob, blob_bb,keypoint_filter_range_slider);
 /*        if (kp_cur_blob.empty() || kp_prev_blob.empty())
             continue;*/
         time_keypoint_filtering = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_keypoint_filtering_total += time_keypoint_filtering;
-        cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
+        //cout << "TIME Filtering keypoints: " << time_keypoint_filtering << endl;
 
         start = high_resolution_clock::now();
-        cout << "Blob Angle " << calculate_angle_by_com(blob(blob_bb)) << endl;
+        int blob_angle = calculate_angle_by_com(blob(blob_bb));
+        cout << "Blob Angle " << blob_angle << endl;
 
-        angle_per_blob.push_back(calculate_angle_by_com(blob(blob_bb)));
+        angle_per_blob.push_back(blob_angle);
         time_angle_calculation = duration_cast<microseconds>(high_resolution_clock::now() - start).count();
         time_angle_calculation_total = time_angle_calculation;
-        cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
-        cout << "PrevKeypoints: " << kp_prev_blob.size() << " AfterKeypoints " << kp_cur_blob.size() << endl;
+        //cout << "TIME Blob angle calculation: " << time_angle_calculation << endl;
 
+
+        int angle_discarded_points = 0;
+        vector<float> angles = vector<float>();
         update_hsv_image(hsv_image, angle_per_blob.back(), blob);
         for(size_t i : kp_prev_blob)
         {
             int bestDist = 256;
             int bestIdx2 = -1;
+            float angle;
+            float bestAngle;
+
+
             cv::Mat desc1 = des_prev.row(i);
             for(size_t i2 : kp_cur_blob)
             {
                 cv::Mat desc2 = des_cur.row(i2);
 
-                auto start_kp = kp_cur.at(i2);
-                auto end_kp = kp_prev.at(i);
+                auto start_kp = kp_cur.at(i2).pt;
+                auto end_kp = kp_prev.at(i).pt;
+                Vec2f dir = end_kp - start_kp;
+                angle = atan2(-dir.val[0], dir.val[1]) * 180.0 / 3.14159265;
+
+                if (angle < 0) angle += 360;
+
+                if(abs(angle - blob_angle) > angle_tolerance_slider){
+                    angle_discarded_points++;
+                    continue;
+                }
 
 
                 const int dist = DescriptorDistance(desc1,desc2);
@@ -200,17 +212,38 @@ static void threshold_trackbar (int , void* )
                 {
                     bestDist=dist;
                     bestIdx2=i2;
+                    bestAngle = angle;
                 }
             }
             if(bestDist<=best_dist_threshold) {
+                angles.push_back(bestAngle);
                 matches.emplace_back(i, bestIdx2, bestDist);
                 total_matches++;
             }
         }
+        drawMatches(previous, kp_prev, current, kp_cur, matches, match_results, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        cv::Mat difference;
+        cv::subtract(match_results, matches_base, difference, noArray(), CV_8S);
+        cv::add(matches_mask_total, difference, matches_mask_total, noArray(), CV_8U);
 
-        drawMatches(previous, kp_prev, current, kp_cur, matches, match_results);//, Scalar::all(-1), Scalar::all(-1), std::vector<char>(), cv::DrawMatchesFlags::NOT_DRAW_SINGLE_POINTS);
+        vector<KeyPoint> temp = vector<KeyPoint>();
+        for(auto index : kp_prev_blob){
+            temp.push_back(kp_prev.at(index));
+        }
+        drawKeypoints(match_results(Rect(0,0,match_results.size().width/2, match_results.size().height)), temp, match_results(Rect(0,0,match_results.size().width/2, match_results.size().height)));
+
+        temp.clear();
+        for(auto index : kp_cur_blob){
+            temp.push_back(kp_cur.at(index));
+        }
+        drawKeypoints(match_results(Rect(match_results.size().width/2,0,match_results.size().width/2, match_results.size().height)), temp, match_results(Rect(match_results.size().width/2,0,match_results.size().width/2, match_results.size().height)));
+
         list_of_match_results.push_back(match_results.clone());
-        cout << "Final match number of Blob: " << matches.size() << endl;
+        cout << "PrevKeypoints: " << kp_prev_blob.size() << " AfterKeypoints: " << kp_cur_blob.size() << " ";
+        cout << "Number of successful matches: " << matches.size() << endl;
+        cout << "Number of angle discarded points: " << angle_discarded_points << " Angles of each match: " << endl;
+        PRINT_VECTOR(angles);
+        cout << endl << endl;
     }
 
     /*auto base_processing_time = time_blob_extraction + time_three_frame_differencing + time_dilation_total + time_keypoint_filtering_total;
@@ -249,6 +282,10 @@ static void threshold_trackbar (int , void* )
     cv::imshow("Diff", diff_img);
     cvtColor(hsv_image, hsv_image, COLOR_HSV2BGR);
     CHECK_IMAGE(hsv_image, false);
+    CHECK_IMAGE(matches_mask_total, false);
+    setTrackbarPos("Match", "Control", match_result_value+1); //Force Match Window Update
+    setTrackbarPos("Match", "Control", match_result_value-1); //Force Match Window Update
+
 
     //------------For video making
     /*/
@@ -379,7 +416,7 @@ int main(int argc, char** argv )
     int scale_factor = 4;
 
     //glob("C:\\Users\\Stagakis\\Desktop\\rgbd_dataset_freiburg1_xyz\\rgb_short", fn, false);
-    glob("../../my_dataset/rgb/*png", fn, false);
+    glob("../../rgbd_dataset_freiburg1_rpy/rgb/*png", fn, false);
     images.reserve(fn.size());
     LOG("Loading images");
     for(int i = 0; i < fn.size(); i++){
@@ -463,6 +500,9 @@ void createWindowsAndTrackbars() {
     cv::createTrackbar("Adapt_Neigh(2*N+1)", "Control", &adapt_neighboorhood, 50, frame_trackbar);
     cv::createTrackbar("-Adapt_Const", "Control", &adapt_constant, 20, frame_trackbar);
     cv::createTrackbar("Threshold", "Control", &threshold_slider, 255, threshold_trackbar);
+    cv::createTrackbar("KeyPointFilteringRange", "Control", &keypoint_filter_range_slider, 10, threshold_trackbar);
+    cv::createTrackbar("AngleTolerance", "Control", &angle_tolerance_slider, 180, threshold_trackbar);
+
     cv::createTrackbar("BasicTheshold(0/1)", "Control", &use_basic_thresholding, 1, threshold_trackbar);
     cv::createTrackbar("Dilation(2*X+1)", "Control", &dilation_slider, 3, [](int, void*) -> void {threshold_trackbar(0,0); });
     cv::createTrackbar("BestDistThresh", "Control", &best_dist_threshold, 150, [](int, void*) -> void {threshold_trackbar(0,0); });

@@ -23,7 +23,7 @@ Vec2f calculate_direction(cv::Mat& image);
 Vec2f calculate_direction_com(const cv::Mat& image);
 void update_hsv_image(cv::Mat& hsv_img, float angle, const cv::Mat& mask_img);
 void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
-                         cv::Mat& mask_img, cv::Rect& bb);
+                         cv::Mat& mask_img, cv::Rect& bb, int range = 1);
 void filter_keypoints_and_descriptors(vector<KeyPoint>& all_kp, Mat& all_des, vector<KeyPoint>& out_kp, Mat& out_des, int color, const cv::Mat& mask_img);
 void filter_keypoints(vector<KeyPoint>& all_kp, vector<KeyPoint>& out_kp, int color, const cv::Mat& mask_img);
 void create_mask_mat(cv::Mat& mask_mat, vector<KeyPoint>& kp_cur_blob, vector<KeyPoint>& kp_prev_blob, int angle, int tolerance);

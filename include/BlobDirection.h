@@ -20,7 +20,7 @@ using namespace std;
 int best_dist_threshold = 100;
 
 #define LOG(x) std::cout << x << endl;
-#define PRINT_VECTOR(x) for(auto k: x) std::cout<<k<<endl;
+#define PRINT_VECTOR(x) for(auto k: x) std::cout<< std::setprecision(4) << k<< ", ";
 #define PRINT_VECTOR_SBS(x, y) for(int i = 0; i <x.size(); i++) std::cout<<x[i]<< "  " << y[i] << std::endl;
 #define MEAN_VALUE(v) std::accumulate(v.begin(), v.end(), 0LL) / v.size()
 #define PRINT_KEYPOINT(x) for(auto k: x) std::cout<<k.response<<endl;
@@ -46,6 +46,8 @@ ThreeFrameProcesser* tfp;
 std::vector<cv::Mat> images;
 int frame_slider = 387; // 223;
 int threshold_slider = 40;// 52; //40;
+int keypoint_filter_range_slider = 1;// 52; //40;
+int angle_tolerance_slider = 50;
 int adapt_neighboorhood = 10;// 52; //40;
 int adapt_constant = 4;// 52; //40;
 int use_basic_thresholding = 1;

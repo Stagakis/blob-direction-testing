@@ -5,7 +5,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/stagakis/Desktop/blob_direction_testing/src/BlobExtractor.cpp" "/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug/CMakeFiles/Blob_direction.dir/src/BlobExtractor.cpp.o"
-  "/home/stagakis/Desktop/blob_direction_testing/src/BlobMatcher.cpp" "/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug/CMakeFiles/Blob_direction.dir/src/BlobMatcher.cpp.o"
   "/home/stagakis/Desktop/blob_direction_testing/src/ORBextractor.cc" "/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug/CMakeFiles/Blob_direction.dir/src/ORBextractor.cc.o"
   "/home/stagakis/Desktop/blob_direction_testing/src/ThreeFrameProcesser.cpp" "/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug/CMakeFiles/Blob_direction.dir/src/ThreeFrameProcesser.cpp.o"
   "/home/stagakis/Desktop/blob_direction_testing/src/helpers.cpp" "/home/stagakis/Desktop/blob_direction_testing/cmake-build-debug/CMakeFiles/Blob_direction.dir/src/helpers.cpp.o"
@@ -17,10 +16,10 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../"
   "../include"
-  "/usr/include/eigen3"
   ".././include"
   "../."
-  "/usr/local/include/opencv4"
+  "/usr/local/include/opencv"
+  "/usr/include/eigen3"
   "/home/stagakis/Pangolin/include"
   "/home/stagakis/Pangolin/build/src/include"
   )

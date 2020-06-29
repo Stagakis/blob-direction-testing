@@ -72,12 +72,10 @@ bool BlobExtractor::GetNextBlob(cv::Mat& out_blob_img, cv::Rect& out_bb) {
 
         recursion_func2(pixel, diff_img, 255, binary_mask_image, before_points, after_points, top_left, bottom_right);
 
-        /*
         if (!(   before_points + after_points < PIXEL_THRESHOLD / (4)
               || before_points < 0.3 * after_points || after_points < 0.3 * before_points
               || before_points == 0 || after_points == 0)) {
-        */
-        if(true){
+
             out_bb = cv::Rect(top_left, bottom_right);
 
             out_blob_img = binary_mask_image;

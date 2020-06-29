@@ -15,12 +15,12 @@ int frame_counter = 0;
 
 
 void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>& out_kp_indeces, int color,
-                              cv::Mat& mask_img, cv::Rect& bb){
+                              cv::Mat& mask_img, cv::Rect& bb, int range){
 
-    cv::Rect bb_orig = cv::Rect(bb.x*4, bb.y*4, bb.width*4, bb.height*4);
-    int range = 1;
+    cv::Rect bb_orig = cv::Rect(bb.x*4 - range, bb.y*4 - range, bb.width*4 + 2*range, bb.height*4 + 2*range);
     for(int k = 0; k< all_kp.size(); ++k){
         if(!bb_orig.contains(all_kp.operator[](k).pt)) {            continue;        }
+
 
         //int pt_x = (int)all_kp.operator[](k).pt.x/4;
         //int pt_y = (int)all_kp.operator[](k).pt.y/4; //TODO check is there is a speed difference
@@ -179,7 +179,10 @@ Vec2f calculate_direction_com(const cv::Mat& image) {
     start_point /= before_points;
 
     cv::Vec2f direction = end_point - start_point;
+
     float length = sqrt(direction.dot(direction));
+
+    if(length == 0) return Vec2f(0,0);
 
     return direction / length;
 }
