@@ -38,7 +38,6 @@ void categorize_kp_to_blobs();
 //Mat diff_img;
 Mat current_greyscale, previous_greyscale;
 
-
 ORB_SLAM2::ORBextractor* ORBextractorLeft;
 BlobExtractor* blextr;
 ThreeFrameProcesser* tfp;
@@ -49,14 +48,15 @@ int threshold_slider = 40;// 52; //40;
 int keypoint_filter_range_slider = 1;// 52; //40;
 int angle_tolerance_slider = 50;
 int adapt_neighboorhood = 10;// 52; //40;
-int adapt_constant = 4;// 52; //40;
+int adapt_constant = 10;// 52; //40;
 int use_basic_thresholding = 1;
+int blobs_to_process_slider = 4;
 
 int dilation_slider = 1; //40;
 int recursion_depth = 0;
 int template_value = 0;
 int match_result_value = 0;
-int blob_angle_tolerance = 5;
+
 
 //Timing variables
 vector<long long> blob_extractions_time;

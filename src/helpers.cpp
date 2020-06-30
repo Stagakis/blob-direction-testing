@@ -46,7 +46,6 @@ void filter_keypoints_indeces(const vector<cv::KeyPoint>& all_kp, vector<size_t>
                 }
             }
         }
-
         //*/
     }
 }
@@ -182,7 +181,10 @@ Vec2f calculate_direction_com(const cv::Mat& image) {
 
     float length = sqrt(direction.dot(direction));
 
-    if(length == 0) return Vec2f(0,0);
+    if(length == 0){
+        cout << "BLOB HAS LENGTH OF ZERO" << endl;
+        return Vec2f(0,0);
+    }
 
     return direction / length;
 }
