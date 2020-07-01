@@ -114,7 +114,7 @@ static void threshold_trackbar (int , void* )
         threshold(diff_cur_prev, diff_cur_prev, 50, 0, CV_THRESH_TOZERO);
         threshold(diff_prev_preprev, diff_prev_preprev, 50, 0, CV_THRESH_TOZERO);
 
-        int numberOfCells = 6;
+        int numberOfCells = 8;
 
         for(int i = 0; i < numberOfCells/2 ; i++){
             for(int j = 0; j < numberOfCells/2 ; j++){
@@ -204,7 +204,8 @@ static void threshold_trackbar (int , void* )
 
                 auto start_kp = kp_cur.at(i2).pt;
                 auto end_kp = kp_prev.at(i).pt;
-                Vec2f dir = end_kp - start_kp;
+                //Vec2f dir = end_kp - start_kp;
+                Vec2f dir = start_kp - end_kp;
                 cv::normalize(dir, dir);
                 angle = dir.dot(blob_direction_vector);
                 angle = angle * 180.0 / 3.14159265;
@@ -230,13 +231,13 @@ static void threshold_trackbar (int , void* )
             if(bestDist<=best_dist_threshold) {
                 angles.push_back(bestAngle);
                 matches.emplace_back(i, bestIdx2, bestDist);
-                total_matches++;
+                //total_matches++;
             }
         }
 
 
         matches.clear();
-        total_matches = 0;
+        //total_matches = 0;
         //CHECK_IMAGE(cross_val_mat, true);
         for(int i = 0 ; i < cross_val_mat.rows; i++){
             auto row = cross_val_mat.row(i);
